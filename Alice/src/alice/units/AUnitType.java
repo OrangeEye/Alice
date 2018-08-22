@@ -6,16 +6,81 @@ import bwapi.UnitType;
 
 public class AUnitType {
 	
-	private static final HashMap<UnitType, AUnitType> instances = new HashMap<>();
+	private static final HashMap<UnitType, AUnitType> listAUnitType = new HashMap<UnitType, AUnitType>();
 	
 	private UnitType unitType;
 	private int ID;
 	private static int firstFreeID = 1;
 	
-	private AUnitType(UnitType ut) {
-		this.ID = firstFreeID++;
-		this.unitType = ut;
+
+	/**
+     * Atlantis uses wrapper for BWMirror native classes which aren't extended.<br />
+     * <b>AUnitType</b> class contains numerous helper methods, but if you think some methods are missing you
+     * can create missing method here and you can reference original UnitType class via ut() method.
+     */
+    public static AUnitType addUnitType(UnitType ut) {
+        if (ut == null) {
+            throw new RuntimeException("AUnitType constructor: type is null");
+        }
+
+        if (listAUnitType.containsKey(ut)) {
+            return listAUnitType.get(ut);
+        } else {
+            AUnitType unitType = new AUnitType(ut);
+            listAUnitType.put(ut, unitType);
+            return unitType;
+        }
+    }
+    
+    private AUnitType(UnitType ut) {
+        if (ut == null) {
+            throw new RuntimeException("AUnitType constructor: type is null");
+        }
+        this.unitType = ut;
+        this.ID = firstFreeID++;
+    }
+    
+    /**
+     * Returns true if given type equals to one of types passed as parameter.
+     */
+    public boolean isType(AUnitType... types) {
+        for (AUnitType otherType : types) {
+            if (this.equals(otherType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean isBuilding() {
+    	return unitType.isBuilding();
+    }
+    
+    public boolean isInfantry() {
+    	return unitType.isOrganic();
 	}
+	
+	public boolean isVehicle() {
+		return unitType.isMechanical();
+
+	}
+	
+	public boolean isWorker() {
+		return unitType.isWorker();
+	}
+	
+	public boolean isAddon() {
+		return unitType.isAddon();
+	}
+	
+	/**
+     * Gibt zurück, welche Einheit/Gebäude diese Einheit baut
+     */
+    public AUnitType getWhatBuildsIt() {
+        return addUnitType(unitType.whatBuilds().first);
+    }
+	
+	
 
 	public static final AUnitType Terran_Firebat = new AUnitType(UnitType.Terran_Firebat);
 	public static final AUnitType Terran_Ghost = new AUnitType(UnitType.Terran_Ghost);
