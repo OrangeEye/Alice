@@ -1,6 +1,6 @@
 package alice.constructing;
 
-import alice.AGame;
+import alice.constructing.position.TerranAddonManager;
 import alice.production.ProductionOrder;
 import alice.units.AUnitType;
 

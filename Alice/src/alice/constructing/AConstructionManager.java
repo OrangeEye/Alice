@@ -63,7 +63,7 @@ public class AConstructionManager {
             throw new RuntimeException("Requested construction of not building!!! Type: " + building);
         }
 
-        //prüft ob das Gebäude eine spezielle Behandlung bedarf
+        //prüft ob das Gebäude eine spezielle Behandlung bedarf und führt diese dann aus (zB ein Addon)
         if (ASpecificConstructionManager.handledAsSpecialBuilding(building, order)) {
             return;
         }
@@ -72,7 +72,7 @@ public class AConstructionManager {
         // Create ConstructionOrder object, assign random worker for the time being
         ConstructionOrder newConstructionOrder = new ConstructionOrder(building);
         newConstructionOrder.setProductionOrder(order);
-        newConstructionOrder.setNearTo(near);
+        newConstructionOrder.setNear(near);
         newConstructionOrder.assignRandomBuilderForNow();
 
         if (newConstructionOrder.getBuilder() == null) {

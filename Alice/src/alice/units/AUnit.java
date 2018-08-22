@@ -4,10 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import alice.AGame;
+import alice.units.action.UnitAction;
 import bwapi.Player;
 import bwapi.Unit;
 
-public class AUnit {
+public class AUnit implements AUnitOrders {
 
 	// Mapping of native unit IDs to AUnit objects
 	private static final Map<Integer, AUnit> listAUnit = new HashMap<Integer, AUnit>();
@@ -18,7 +19,23 @@ public class AUnit {
 	private boolean isMilitaryBuildingAntiAir;
 	private AUnitType lastCachedType; //der zuletzt gespeichertete AUnitType für diese Einheit
 	private boolean isWorker;
+	private UnitAction unitAction;
 	
+	
+	@Override
+	public Unit u() { 
+		// TODO Auto-generated method stub
+		return unit;
+	}
+	
+	/**
+     * This method exists only to allow reference in UnitActions class.
+     */
+	@Override
+	public AUnit unit() {
+		// TODO Auto-generated method stub
+		return this;
+	}
 
 	public static AUnit addUnit(Unit u) {
 		if (u == null) {
@@ -105,6 +122,14 @@ public class AUnit {
 	public boolean isIdle() {
 		return unit.isIdle();
 	}
+	
+	public boolean isGatheringMinerals() {
+        return unit.isGatheringMinerals();
+    }
+
+    public boolean isGatheringGas() {
+        return unit.isGatheringGas();
+    }
 
 	/**
 	 * Gibt den EinheitenTyp der Einheit oder Unkown zurück (Durch Kriegsnebel) und 
@@ -135,6 +160,10 @@ public class AUnit {
 			return false;
 	}
 	
+	public void setUnitAction(UnitAction unitAction) {
+        this.unitAction = unitAction;
+    }
+	
 	/**
 	 * Gibt den Spieler zurück, dem diese Einheit gehört
 	 * @return
@@ -142,5 +171,9 @@ public class AUnit {
 	public Player getPlayer() {
         return unit.getPlayer();
     }
+
+
+
+	
 
 }

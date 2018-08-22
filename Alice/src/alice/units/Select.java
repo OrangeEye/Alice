@@ -99,6 +99,16 @@ public class Select {
         return this;
     }
     
+    public Select ourMiningMineralsWorkers() {
+    	Iterator<AUnit> unitsIterator = ourUnits.iterator();
+        while (unitsIterator.hasNext()) {
+            AUnit unit = unitsIterator.next();	
+            if (!unit.isGatheringMinerals()) 
+                unitsIterator.remove();
+        }
+        return this;
+    }
+    
     /**
      * Returns first unit that matches previous conditions or null if no units match conditions.
      */

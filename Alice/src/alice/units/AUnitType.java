@@ -73,6 +73,10 @@ public class AUnitType {
 		return unitType.isAddon();
 	}
 	
+	public UnitType getUnitType() {
+		return unitType;
+	}
+	
 	/**
      * Gibt zurück, welche Einheit/Gebäude diese Einheit baut
      */
