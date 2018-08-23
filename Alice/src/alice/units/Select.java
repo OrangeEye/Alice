@@ -3,7 +3,9 @@ package alice.units;
 import java.util.*;
 
 import alice.AGame;
+import alice.position.APosition;
 import alice.units.AUnit;
+import bwapi.Position;
 import bwapi.Unit;
 
 /**
@@ -98,15 +100,32 @@ public class Select {
         }
         return this;
     }
-    
+    /**
+     * Gibt alle unsere Arbeiter zurück, die Mineralien sammeln
+     */
     public Select ourMiningMineralsWorkers() {
     	Iterator<AUnit> unitsIterator = ourUnits.iterator();
         while (unitsIterator.hasNext()) {
             AUnit unit = unitsIterator.next();	
-            if (!unit.isGatheringMinerals()) 
+            if (!unit.isGatheringMinerals()) //TODO Überprüfen ob alle Arbeiter auch den Status Mining Minerals haben
                 unitsIterator.remove();
         }
         return this;
+    }
+    
+    /**
+     * Gibt die Einheit zurück die am nächsten ist oder die innerhalb des Radius ist
+     */
+    public AUnit clostestOrInRadius(APosition target, int radius) {
+    	AUnit nextUnit = null;
+    	for (AUnit unit : this.listSelectedAUnits){
+    		int distance = unit.getDistance(target);
+    		if( distance <= radius)
+    			return unit;
+    		else if(nextUnit == null || distance < nextUnit.getDistance(target))
+    			nextUnit = unit;
+    	}
+    	return nextUnit;
     }
     
     /**

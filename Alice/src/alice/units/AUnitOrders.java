@@ -1,7 +1,6 @@
 package alice.units;
 
 import alice.units.action.UnitActions;
-import atlantis.units.Select;
 import bwapi.Unit;
 
 /**

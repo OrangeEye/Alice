@@ -4,8 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import alice.AGame;
+import alice.position.APosition;
 import alice.units.action.UnitAction;
 import bwapi.Player;
+import bwapi.Position;
 import bwapi.Unit;
 
 public class AUnit implements AUnitOrders {
@@ -129,6 +131,10 @@ public class AUnit implements AUnitOrders {
 
     public boolean isGatheringGas() {
         return unit.isGatheringGas();
+    }
+    
+    public int getDistance(APosition target) {
+    	return unit.getDistance(target.getPosition());
     }
 
 	/**

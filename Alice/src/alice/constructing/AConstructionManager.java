@@ -2,8 +2,10 @@ package alice.constructing;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import alice.AGame;
 import alice.position.APosition;
 import alice.production.ProductionOrder;
+import alice.units.AUnit;
 import alice.units.AUnitType;
 import alice.units.Select;
 
@@ -73,12 +75,10 @@ public class AConstructionManager {
         ConstructionOrder newConstructionOrder = new ConstructionOrder(building);
         newConstructionOrder.setProductionOrder(order);
         newConstructionOrder.setNear(near);
-        newConstructionOrder.assignRandomBuilderForNow();
+        newConstructionOrder.assignNextBuilderForNow(near);
 
         if (newConstructionOrder.getBuilder() == null) {
-            if (AGame.getSupplyUsed() >= 7) {
                 System.err.println("Builder is null, got damn it!");
-            }
             return;
         }
 

@@ -5,6 +5,8 @@ import alice.production.ProductionOrder;
 import alice.units.AUnit;
 import alice.units.AUnitType;
 import alice.units.Select;
+import atlantis.constructing.position.APositionFinder;
+import bwapi.Position;
 
 public class ConstructionOrder {
 
@@ -15,10 +17,16 @@ public class ConstructionOrder {
 	private APosition near;
 	private AUnit builder;
 
+	
+
 	public ConstructionOrder(AUnitType buildingType) {
 		this.buildingType = buildingType;
 
 		status = ConstructionOrderStatus.CONSTRUCTION_NOT_STARTED;
+	}
+	
+	public AUnit getBuilder() {
+		return builder;
 	}
 
 	public ConstructionOrderStatus getStatus() {
@@ -47,7 +55,7 @@ public class ConstructionOrder {
 		this.positionToBuild = positionToBuild;
 	}
 
-	public APosition getNear() {
+	public APosition getNearTo() {
 		return near;
 	}
 
@@ -56,11 +64,18 @@ public class ConstructionOrder {
 	}
 	
 	/**
+     * If it's impossible to build in given position (e.g. occupied by units), find new position.
+     */
+    public APosition findNewBuildPosition() {
+        return APositionFinder.getPositionForNew(builder, buildingType, this);
+    }
+	
+	/**
      * In order to find a tile for building, one worker must be assigned as builder. We can assign any worker
      * and we're cool, bro.
      */
-    protected void assignRandomBuilderForNow() {
-        builder = Select.ourMiningMineralsWorkers().first();
+    protected void assignNextBuilderForNow(APosition target) {
+        builder = Select.our().ourMiningMineralsWorkers().clostestOrInRadius(target, 600); //TODO Radius evtl. anpassen
     }
 
 }
