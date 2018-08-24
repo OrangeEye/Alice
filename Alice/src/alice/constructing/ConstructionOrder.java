@@ -1,17 +1,18 @@
 package alice.constructing;
 
+import alice.constructing.position.APositionFinder;
 import alice.position.APosition;
 import alice.production.ProductionOrder;
 import alice.units.AUnit;
 import alice.units.AUnitType;
 import alice.units.Select;
-import atlantis.constructing.position.APositionFinder;
 import bwapi.Position;
 
 public class ConstructionOrder {
 
 	private AUnitType buildingType;
 	private ConstructionOrderStatus status;
+	private double maxDistance;
 	private ProductionOrder productionOrder;
 	private APosition positionToBuild;
 	private APosition near;
@@ -63,11 +64,19 @@ public class ConstructionOrder {
 		this.near = near;
 	}
 	
+	public double getMaxDistance() {
+        return maxDistance;
+    }
+
+    public void setMaxDistance(double maxDistance) {
+        this.maxDistance = maxDistance;
+    }
+	
 	/**
      * If it's impossible to build in given position (e.g. occupied by units), find new position.
      */
     public APosition findNewBuildPosition() {
-        return APositionFinder.getPositionForNew(builder, buildingType, this);
+        return APositionFinder.getPositionForNew(buildingType, this);
     }
 	
 	/**

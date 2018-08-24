@@ -5,6 +5,7 @@ import java.util.Map;
 
 import alice.AGame;
 import alice.position.APosition;
+import alice.repair.ARepairManager;
 import alice.units.action.UnitAction;
 import bwapi.Player;
 import bwapi.Position;
@@ -135,6 +136,18 @@ public class AUnit implements AUnitOrders {
     
     public int getDistance(APosition target) {
     	return unit.getDistance(target.getPosition());
+    }
+
+    public boolean isConstructing() {
+    	return unit.isConstructing();
+    }
+    
+    public boolean isRepairing() {
+    	return unit.isRepairing();
+    }
+    
+    public boolean isRepairerOfAnyKind() {
+        return ARepairManager.isRepairerOfAnyKind(this);
     }
 
 	/**

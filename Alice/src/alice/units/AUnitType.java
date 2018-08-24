@@ -2,6 +2,7 @@ package alice.units;
 
 import java.util.HashMap;
 
+import alice.position.APosition;
 import bwapi.UnitType;
 
 public class AUnitType {
@@ -76,6 +77,20 @@ public class AUnitType {
 	public UnitType getUnitType() {
 		return unitType;
 	}
+	
+	public boolean isGasBuilding() {
+		return isType(AUnitType.Terran_Refinery, AUnitType.Protoss_Assimilator, AUnitType.Zerg_Extractor);
+	}
+	
+	public boolean isBase() {
+		return isType(AUnitType.Terran_Command_Center, AUnitType.Protoss_Nexus, AUnitType.Zerg_Hatchery,
+                AUnitType.Zerg_Lair, AUnitType.Zerg_Hive);
+	}
+	
+	public boolean isBunker() {
+		return isType(AUnitType.Terran_Bunker);
+	}
+	
 	
 	/**
      * Gibt zurück, welche Einheit/Gebäude diese Einheit baut

@@ -9,13 +9,15 @@ import alice.units.Select;
 
 public class APositionFinder {
 	
+	public static int totalRequests = 0;
+	
 	/**
      * Returns build position for next building of given type.
      */
-    public static APosition getPositionForNew(AUnit builder, AUnitType building, ConstructionOrder constructionOrder) {
+    public static APosition getPositionForNew(AUnitType building, ConstructionOrder constructionOrder) {
         APosition near = constructionOrder != null ? constructionOrder.getNearTo() : null;
         double maxDistance = constructionOrder != null ? constructionOrder.getMaxDistance() : 30;
-        return getPositionForNew(builder, building, constructionOrder, near, maxDistance);
+        return getPositionForNew(building, constructionOrder, near, maxDistance);
     }
     
     /**
@@ -23,7 +25,7 @@ public class APositionFinder {
      * position
      * <b>maxDistance</b> build tiles from given position.
      */
-    public static APosition getPositionForNew(AUnit builder, AUnitType building, 
+    public static APosition getPositionForNew(AUnitType building, 
             ConstructionOrder constructionOrder, APosition nearTo, double maxDistance) {
         totalRequests++;
         constructionOrder.setMaxDistance(maxDistance);
@@ -31,7 +33,7 @@ public class APositionFinder {
         // =========================================================
         // Buildings extracting GAS
         if (building.isGasBuilding()) {
-            return ASpecialPositionFinder.findPositionForGasBuilding(building);
+            return ASpecialPositionFinder.findPositionForGasBuilding(building); 
         } 
 
         // =========================================================

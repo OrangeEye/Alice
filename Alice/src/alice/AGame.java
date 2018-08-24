@@ -1,6 +1,7 @@
 package alice;
 
 import bwapi.Player;
+import bwapi.Race;
 
 /**
  * Repräsentiert verschiedene Aspekte aus dem Spiel wie Spielzeit, Supply, 
@@ -18,6 +19,21 @@ public class AGame {
      */
     public static double getSupplyTotal() {
         return supplyTotal;
+    }
+    
+    /**
+     * Returns true if user plays as Terran.
+     */
+    public static boolean playsAsTerran() {
+        return AtlantisConfig.MY_RACE.equals(Race.Terran);
+    }
+
+
+    /**
+     * Returns true if user plays as Zerg.
+     */
+    public static boolean playsAsZerg() {
+        return AtlantisConfig.MY_RACE.equals(Race.Zerg);
     }
     
     public static double getSupplyUsed() {
