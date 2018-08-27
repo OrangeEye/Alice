@@ -25,7 +25,7 @@ public class AGame {
      * Returns true if user plays as Terran.
      */
     public static boolean playsAsTerran() {
-        return AtlantisConfig.MY_RACE.equals(Race.Terran);
+        return AliceConfig.MY_RACE.equals(Race.Terran);
     }
 
 
@@ -33,7 +33,7 @@ public class AGame {
      * Returns true if user plays as Zerg.
      */
     public static boolean playsAsZerg() {
-        return AtlantisConfig.MY_RACE.equals(Race.Zerg);
+        return AliceConfig.MY_RACE.equals(Race.Zerg);
     }
     
     public static double getSupplyUsed() {

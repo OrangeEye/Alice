@@ -60,7 +60,7 @@ public class ConstructionOrder {
 		return near;
 	}
 
-	public void setNear(APosition near) {
+	public void setNearTo(APosition near) {
 		this.near = near;
 	}
 	

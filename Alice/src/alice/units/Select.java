@@ -3,12 +3,14 @@ package alice.units;
 import java.util.*;
 
 import alice.AGame;
+import alice.AliceConfig;
 import alice.constructing.AConstructionManager;
 import alice.position.APosition;
 import alice.scout.AScoutManager;
 import alice.units.AUnit;
 import bwapi.Position;
 import bwapi.Unit;
+import bwapi.UnitType;
 
 /**
  * Diese Klasse ermöglicht es einfach Einheiten auszuwählen zB. einen Marine der
@@ -16,16 +18,20 @@ import bwapi.Unit;
  * Klasse eine Liste von Einheiten
  */
 public class Select {
-	
+
 	private static List<AUnit> ourUnits; // Alle unsere Einheiten / Gebäude
 	private static List<AUnit> ourWorkers; // Alle unsere Arbeiter
+	private static List<AUnit> neutralUnits;
+	private static List<AUnit> ourDestroyedUnits;
+	private static List<AUnit> mineralFields;
 
-	private List<AUnit> listSelectedAUnits;
-	
+	// CACHED variables
+	private static AUnit _cached_mainBase = null;
+
+	private List<AUnit> listSelectedAUnits = new ArrayList<AUnit>();
 
 	// Constructor is private, use our(), enemy() or neutral() methods
 	protected Select(Collection<AUnit> unitsData) {
-		listSelectedAUnits = new ArrayList<AUnit>();
 		listSelectedAUnits.addAll(unitsData);
 	}
 
@@ -37,8 +43,16 @@ public class Select {
 		return ourUnits;
 	}
 
-	public static Select ourWorkers() {
-		return new Select(ourWorkers);
+	public static List<AUnit> ourWorkers() {
+		return ourWorkers;
+	}
+
+	public static Select neutral() {
+		return new Select(neutralUnits);
+	}
+
+	public static List<AUnit> getOurDestroyedUnits() {
+		return ourDestroyedUnits;
 	}
 
 	/**
@@ -78,14 +92,14 @@ public class Select {
 		}
 		return this;
 	}
-	
+
 	public static Select ourBases() {
 
 		if (AGame.playsAsZerg()) {
-			return (Select<AUnit>) our().ofType(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, AUnitType.Zerg_Hive,
+			return our().ofType(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, AUnitType.Zerg_Hive,
 					AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center);
 		} else {
-			return (Select<AUnit>) our().ofType(AtlantisConfig.BASE);
+			return our().ofType(AliceConfig.BASE);
 		}
 	}
 
@@ -110,22 +124,83 @@ public class Select {
 	 * Selects only those units which are idle. Idle is unit's class flag so be
 	 * careful with that.
 	 */
-	public Select idle() {
-		Iterator<AUnit> unitsIterator = listSelectedAUnits.iterator();
-		while (unitsIterator.hasNext()) {
-			AUnit unit = unitsIterator.next(); // TODO: will probably not work with enemy units
-			if (!unit.isIdle()) {
-				unitsIterator.remove();
+	public static List<AUnit> idle(List<AUnit> unitList) {
+		ArrayList<AUnit> idleUnits = new ArrayList<AUnit>();
+		for (AUnit unit : unitList) {
+			if (unit.isIdle()) {
+				idleUnits.add(unit);
 			}
 		}
-		return this;
+		return idleUnits;
+	}
+
+	/**
+	 * Gibt alle Mineralien auf der Map zurück
+	 * 
+	 * @return
+	 */
+	public static List<AUnit> mineralFields() {
+		return mineralFields;
+		
+			/*
+		return Select.neutral().ofType(AUnitType.Resource_Mineral_Field, AUnitType.Resource_Mineral_Field_Type_2,
+				AUnitType.Resource_Mineral_Field_Type_3); */
+	}
+
+	/**
+	 * Gibt alle Mineralienfelder zurück, die an unserer Basis angrenzen
+	 * 
+	 * @return
+	 */
+	public static List<AUnit> ourMineralFields() {
+		ArrayList<AUnit> ourMineralFields = new ArrayList<AUnit>();
+		
+		for(AUnit mineralField : mineralFields()) {
+			for (AUnit base : ourBases().listSelectedAUnits) {
+				if (mineralField.isInRangeTo(base, 12)) {
+					ourMineralFields.add(mineralField);
+					break;
+				}
+			}
+		}
+		return ourMineralFields;
+		
+		/*
+		Select mineralFields = mineralFields();
+		Iterator<AUnit> unitsIterator = mineralFields.listSelectedAUnits.iterator();
+		while (unitsIterator.hasNext()) {
+			AUnit mineralField = unitsIterator.next();
+			boolean isOurMineralField = false;
+			for (AUnit base : ourBases().listSelectedAUnits) {
+				if (mineralField.isInRangeTo(base, 12)) {
+					isOurMineralField = true;
+					break;
+				}
+			}
+			if (!isOurMineralField)
+				unitsIterator.remove();
+		}
+		return mineralFields; */
+	}
+
+	/**
+	 * Gibt ein Mineralienfeld zurück auf dem weniger als 2 Arbeiter beschäftigt
+	 * sind
+	 * @return
+	 */
+	public static AUnit freeMineralField() {
+		for (AUnit mineralField : ourMineralFields()) {
+			if (mineralField.countGatherer() < 2)
+				return mineralField;
+		}
+		return null;
 	}
 
 	/**
 	 * Gibt alle unsere Arbeiter zurück, die Mineralien sammeln
 	 */
 	public Select ourMiningMineralsWorkers() {
-		Iterator<AUnit> unitsIterator = ourUnits.iterator();
+		Iterator<AUnit> unitsIterator = listSelectedAUnits.iterator();
 		while (unitsIterator.hasNext()) {
 			AUnit unit = unitsIterator.next();
 			if (!unit.isGatheringMinerals()) // TODO Überprüfen ob alle Arbeiter auch den Status Mining Minerals haben
@@ -138,18 +213,29 @@ public class Select {
 	 * Selects our workers that are free to construct building or repair a unit.
 	 * That means they mustn't repait any other unit or construct other building.
 	 */
-	public static Select ourWorkersFreeToBuildOrRepair() {
-		Select selectedUnits = ourWorkers();
+	public static List<AUnit> ourWorkersFreeToBuildOrRepair() {
+		
+		
+		ArrayList<AUnit> selectedUnits = new ArrayList<AUnit>();
+		for(AUnit worker : ourWorkers()) {
+			if (worker.isGatheringMinerals()) {
+				selectedUnits.add(worker);
+			}
+		}
+		
+		return selectedUnits;
+		
+		/*
 		Iterator<AUnit> it = selectedUnits.listSelectedAUnits.iterator();
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			AUnit unit = it.next();
-			if ( AConstructionManager.isBuilder(unit)|| unit.isRepairing() 
-					|| AScoutManager.isScout(unit) || unit.isRepairerOfAnyKind()) {
+			if (AConstructionManager.isBuilder(unit) || unit.isRepairing() || AScoutManager.isScout(unit)
+					|| unit.isRepairerOfAnyKind()) {
 				it.remove();
 			}
 		}
 
-		return selectedUnits;
+		return selectedUnits; */
 	}
 
 	/**
@@ -165,6 +251,44 @@ public class Select {
 				nextUnit = unit;
 		}
 		return nextUnit;
+	}
+
+	/**
+	 * Gibt alle Einheiten zurück, die sich im Radius zu der gegebenen Einheit
+	 * befinden
+	 * 
+	 * @param target
+	 * @param radius
+	 * @return
+	 */
+	public Select inRangeTo(AUnit target, int radius) {
+		Iterator<AUnit> it = this.listSelectedAUnits.listIterator();
+		while (it.hasNext()) {
+			AUnit nextUnit = it.next();
+			if (nextUnit.getDistance(target.getPosition()) > radius) {
+				it.remove();
+			}
+		}
+		return this;
+	}
+
+	/**
+	 * Returns first unit being base. For your units this is most likely your main
+	 * base, for enemy it will be first discovered base.
+	 */
+	public static AUnit mainBase() {
+		if (_cached_mainBase == null || !_cached_mainBase.isAlive()) {
+			List<AUnit> bases = ourBases().listUnits();
+			_cached_mainBase = bases.isEmpty() ? Select.ourBuildings().first() : bases.get(0);
+		}
+		return _cached_mainBase;
+	}
+
+	/**
+	 * 
+	 */
+	public List<AUnit> listUnits() {
+		return this.listSelectedAUnits;
 	}
 
 	/**

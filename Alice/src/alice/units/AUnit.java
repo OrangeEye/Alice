@@ -1,9 +1,11 @@
 package alice.units;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import alice.AGame;
+import alice.enemy.AEnemyUnits;
 import alice.position.APosition;
 import alice.repair.ARepairManager;
 import alice.units.action.UnitAction;
@@ -23,6 +25,7 @@ public class AUnit implements AUnitOrders {
 	private AUnitType lastCachedType; //der zuletzt gespeichertete AUnitType für diese Einheit
 	private boolean isWorker;
 	private UnitAction unitAction;
+	private ArrayList<AUnit> gatherer;
 	
 	
 	@Override
@@ -50,11 +53,14 @@ public class AUnit implements AUnitOrders {
 		} else {
 			AUnit unit = new AUnit(u);
 			listAUnit.put(u.getID(), unit);
+			if(unit.isType(AUnitType.Resource_Mineral_Field, AUnitType.Resource_Mineral_Field_Type_2,
+				AUnitType.Resource_Mineral_Field_Type_3, AUnitType.Resource_Vespene_Geyser))
+				unit.gatherer = new ArrayList<AUnit>();
 			return unit;
 		}
 	}
 
-	private AUnit(Unit u) {
+	protected AUnit(Unit u) {
 		if (u == null) {
 			throw new RuntimeException("AUnit constructor: unit is null");
 		}
@@ -79,6 +85,10 @@ public class AUnit implements AUnitOrders {
 	public void refreshType() {
 		lastCachedType = AUnitType.addUnitType(unit.getType());
 		isWorker = isType(AUnitType.Terran_SCV, AUnitType.Protoss_Probe, AUnitType.Zerg_Drone);
+	}
+	
+	public int countGatherer() {
+		return this.gatherer.size();
 	}
 	
 	
@@ -137,6 +147,10 @@ public class AUnit implements AUnitOrders {
     public int getDistance(APosition target) {
     	return unit.getDistance(target.getPosition());
     }
+    
+    public APosition getPosition() {
+    	return APosition.create(unit.getPosition());
+    }
 
     public boolean isConstructing() {
     	return unit.isConstructing();
@@ -148,6 +162,20 @@ public class AUnit implements AUnitOrders {
     
     public boolean isRepairerOfAnyKind() {
         return ARepairManager.isRepairerOfAnyKind(this);
+    }
+    
+    public boolean isAlive() { //funktioniert wahrscheinlich nicht auf feindliche Einheiten
+//      return getHP() > 0 && !AtlantisEnemyUnits.isEnemyUnitDestroyed(this);
+      return isExists() && (!AEnemyUnits.isEnemyUnitDestroyed(this) 
+              && !Select.getOurDestroyedUnits().contains(this));
+  }
+    
+    public AUnitType getBuildType() {
+        return unit.getBuildType() != null ? AUnitType.addUnitType(unit.getBuildType()) : null;
+    }
+    
+    public boolean isExists() {
+    	return unit.exists();
     }
 
 	/**
@@ -166,16 +194,32 @@ public class AUnit implements AUnitOrders {
 			return type;
 		}
 	}
+	
+	public void gather(AUnit target) {
+		unit.gather(target.u());
+		target.setGatherer(this);
+	}
+	
+	public void setGatherer(AUnit worker) {
+		this.gatherer.add(worker);
+	}
 
 	/**
 	 * Prüft ob die Einheit uns gehört
 	 * @return
 	 */
-	private boolean isOurUnit() {
+	public boolean isOurUnit() {
 		//if(getPlayer().equals(AGame.getPlayerUs()))
 		if (getPlayer().getID() == AGame.getPlayerUs().getID())
 			return true;
 		else
+			return false;
+	}
+	
+	public boolean isInRangeTo(AUnit target, int radius) {
+		if(this.getDistance(target.getPosition()) <= radius)
+			return true;
+		else 
 			return false;
 	}
 	

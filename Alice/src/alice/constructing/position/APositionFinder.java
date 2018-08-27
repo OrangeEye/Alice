@@ -39,7 +39,7 @@ public class APositionFinder {
         // =========================================================
         // BASE
         else if (building.isBase()) {
-            APosition position = ASpecialPositionFinder.findPositionForBase(building, builder, constructionOrder);
+            APosition position = ASpecialPositionFinder.findPositionForBase(building, constructionOrder);
             return position;
         } 
 
@@ -90,6 +90,30 @@ public class APositionFinder {
             // Standard place
             
             return findStandardPosition(builder, building, nearTo, maxDistance);
+        }
+    }
+    
+    /**
+     * Returns standard build position for building near given position.
+     */
+    public static APosition findStandardPosition( AUnitType building, APosition nearTo, double maxDistance) {
+        
+        // ===========================================================
+        // = Handle standard building position according to the race =
+        // = as every race uses completely different approach        =
+        // ===========================================================
+        
+        // Terran
+        if (AGame.playsAsTerran()) {
+            return TerranPositionFinder.findStandardPositionFor( building, nearTo, maxDistance);
+        }  // Zerg
+        else if (AGame.playsAsZerg()) {
+            return ZergPositionFinder.findStandardPositionFor( building, nearTo, maxDistance);
+        }
+        else {
+            System.err.println("Invalid race: " + AGame.getPlayerUs().getRace());
+            System.exit(-1);
+            return null;
         }
     }
 

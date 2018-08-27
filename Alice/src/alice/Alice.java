@@ -45,7 +45,7 @@ public class Alice implements BWEventListener {
 	}
 
 	public void onFrame() {
-		// TODO Auto-generated method stub
+		gameCommander.update();
 
 	}
 
