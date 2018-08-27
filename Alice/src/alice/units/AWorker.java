@@ -1,5 +1,7 @@
 package alice.units;
 
-public class AWorker {
-
+public class AWorker extends AUnit{
+	super()
+		
+	
 }

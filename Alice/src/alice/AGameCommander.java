@@ -1,6 +1,7 @@
 package alice;
 
 import alice.production.AProductionCommander;
+import alice.units.AWorkerCommander;
 
 public class AGameCommander {
 	
@@ -8,6 +9,7 @@ public class AGameCommander {
 		
 		//führt den Code von jedem Commander aus
 		AProductionCommander.update();
+		AWorkerCommander.update();
 	}
 
 }
