@@ -15,6 +15,7 @@ public class AliceConfig {
     public static AUnitType DEF_BUILDING_ANTI_LAND = null;
     public static AUnitType DEFENSIVE_BUILDING_ANTI_AIR = null;
     public static ABuildOrder DEFAULT_BUILD_ORDER = null;
+    public static int GAME_SPEED = 20;
 
     // =========================================================
     
@@ -22,7 +23,7 @@ public class AliceConfig {
      * Helper method for using Terran race.
      */
     public static void useConfigForTerran() {
-    	AliceConfig.DEFAULT_BUILD_ORDER = TerranBuildOrder.TERRAN_1_Base_Vultures;
+    //	AliceConfig.DEFAULT_BUILD_ORDER = TerranBuildOrder.TERRAN_1_Base_Vultures;
         
         AliceConfig.MY_RACE = Race.Terran;
         AliceConfig.BASE = AUnitType.Terran_Command_Center;
@@ -33,5 +34,17 @@ public class AliceConfig {
         
         AliceConfig.DEF_BUILDING_ANTI_LAND = AUnitType.Terran_Bunker;
         AliceConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Terran_Missile_Turret;
+    }
+    
+    public static void useConfigForZerg() {
+    	AliceConfig.MY_RACE = Race.Zerg;
+        AliceConfig.BASE = AUnitType.Zerg_Hatchery;
+        AliceConfig.WORKER = AUnitType.Zerg_Drone;
+        AliceConfig.BARRACKS = AUnitType.Terran_Barracks;
+        AliceConfig.SUPPLY = AUnitType.Zerg_Overlord;
+        AliceConfig.GAS_BUILDING = AUnitType.Zerg_Extractor;
+        
+        AliceConfig.DEF_BUILDING_ANTI_LAND = AUnitType.Zerg_Sunken_Colony;
+        AliceConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Zerg_Spore_Colony;
     }
 }

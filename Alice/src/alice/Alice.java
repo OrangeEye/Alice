@@ -1,6 +1,8 @@
 package alice;
 
+import alice.units.Select;
 import bwapi.*;
+import bwta.BWTA;
 
 /**
  * Main bridge between the game and your code, ported to BWMirror.
@@ -89,26 +91,41 @@ public class Alice implements BWEventListener {
         // Initialize Game Commander, eine Klasse die das Spiel steuert
         gameCommander = new AGameCommander();
 
+        Race racePlayed = bwapi.self().getRace(); //AGame.getPlayerUs().getRace();
+        if (racePlayed.equals(Race.Terran)) {
+        	AliceConfig.useConfigForTerran();
+        } else if (racePlayed.equals(Race.Zerg)) {
+        	AliceConfig.useConfigForZerg();
+        }
+
+        System.out.print("Analyzing map... ");
+        BWTA.readMap();
+        BWTA.analyze();
+        System.out.println("Map data ready.");
+        
+        // === Set some BWAPI params ===============================
+        
+        bwapi.setLocalSpeed(AliceConfig.GAME_SPEED); // Change in-game speed (0 - fastest, 20 - normal)
+//        bwapi.setFrameSkip(2); // Number of GUI frames to skip
+//        bwapi.setGUI(false); // Turn off GUI - will speed up game considerably
+        bwapi.enableFlag(1);	// Enable user input - without it you can't control units with mouse
 	}
 
 	public void onUnitComplete(Unit arg0) {
-		// TODO Auto-generated method stub
-
+		Select.addNewUnit(arg0);
 	}
 
 	public void onUnitCreate(Unit arg0) {
-		// TODO Auto-generated method stub
-
+		Select.addNewUnit(arg0);
 	}
 
 	public void onUnitDestroy(Unit arg0) {
-		// TODO Auto-generated method stub
+		Select.addNewUnit(arg0);
 
 	}
 
 	public void onUnitDiscover(Unit arg0) {
-		// TODO Auto-generated method stub
-
+		System.out.println("onUnitDiscover " + arg0.getType().toString());
 	}
 
 	public void onUnitEvade(Unit arg0) {

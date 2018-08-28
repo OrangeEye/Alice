@@ -19,7 +19,7 @@ public class ProcessHelper {
     public static void startChaosLauncherProcess() {
         try {
             Thread.sleep(250);
-            executeInCommandLine("C:\\Program Files\\Spiele\\BWAPI\\Chaoslauncher\\Chaoslauncher.exe");
+            executeInCommandLine("D:\\Spiele\\BWAPI\\Chaoslauncher\\Chaoslauncher.exe");
         } catch (InterruptedException ex) {
             // Soll nichts machen
         }

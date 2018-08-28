@@ -50,4 +50,11 @@ public class AGame {
     public static Player getPlayerUs() {
         return Alice.getBwapi().self();
     }
+    
+    public static Player getPlayerEnemy() {
+        return Alice.getBwapi().enemy();
+    }
+    public static Player getPlayerNeutral() {
+        return Alice.getBwapi().neutral();
+    }
 }

@@ -19,11 +19,20 @@ import bwapi.UnitType;
  */
 public class Select {
 
-	private static List<AUnit> ourUnits; // Alle unsere Einheiten / Gebäude
-	private static List<AUnit> ourWorkers; // Alle unsere Arbeiter
-	private static List<AUnit> neutralUnits;
-	private static List<AUnit> ourDestroyedUnits;
-	private static List<AUnit> mineralFields;
+	private static Map<Integer, AUnit> allUnits = new HashMap<Integer, AUnit>();
+	/*
+	 * private static Map<Integer, AUnit> ourUnits = new HashMap<Integer, AUnit>();
+	 * private static Map<Integer, AUnit> ourWorkers = new HashMap<Integer,
+	 * AUnit>(); private static Map<Integer, AUnit> ourDestroyedUnits = new
+	 * HashMap<Integer, AUnit>(); private static Map<Integer, AUnit> neutralUnits =
+	 * new HashMap<Integer, AUnit>(); private static Map<Integer, AUnit>
+	 * mineralFields = new HashMap<Integer, AUnit>();
+	 */
+	private static List<AUnit> ourUnits= new ArrayList<AUnit>(); // Alle unsere Einheiten / Gebäude
+	private static List<AUnit> ourWorkers= new ArrayList<AUnit>(); // Alle unsere Arbeiter
+	private static List<AUnit> neutralUnits= new ArrayList<AUnit>();
+	private static List<AUnit> ourDestroyedUnits= new ArrayList<AUnit>();
+	private static List<AUnit> mineralFields= new ArrayList<AUnit>();
 
 	// CACHED variables
 	private static AUnit _cached_mainBase = null;
@@ -33,6 +42,31 @@ public class Select {
 	// Constructor is private, use our(), enemy() or neutral() methods
 	protected Select(Collection<AUnit> unitsData) {
 		listSelectedAUnits.addAll(unitsData);
+	}
+
+	public static void addNewUnit(Unit unit) {
+		
+		AUnit newUnit;
+		if (!allUnits.containsKey(unit.getID())) {
+			System.out.println(!allUnits.containsKey(unit.getID()));
+			newUnit = AUnit.addUnit(unit);
+			allUnits.put(newUnit.getID(), newUnit);
+		} else
+			return;
+		
+		if (newUnit.getPlayer().equals(AGame.getPlayerUs())) {
+			ourUnits.add(newUnit);
+			if (newUnit.isType(AliceConfig.WORKER))
+				ourWorkers.add(newUnit);
+		}
+		
+
+		if (newUnit.getPlayer().equals(AGame.getPlayerNeutral())) {
+			neutralUnits.add(newUnit);
+			if (newUnit.isType(AUnitType.Resource_Mineral_Field, AUnitType.Resource_Mineral_Field_Type_2,
+					AUnitType.Resource_Mineral_Field_Type_3, AUnitType.Resource_Vespene_Geyser))
+				mineralFields.add(newUnit);
+		}
 	}
 
 	public static Select our() {
@@ -141,10 +175,12 @@ public class Select {
 	 */
 	public static List<AUnit> mineralFields() {
 		return mineralFields;
-		
-			/*
-		return Select.neutral().ofType(AUnitType.Resource_Mineral_Field, AUnitType.Resource_Mineral_Field_Type_2,
-				AUnitType.Resource_Mineral_Field_Type_3); */
+
+		/*
+		 * return Select.neutral().ofType(AUnitType.Resource_Mineral_Field,
+		 * AUnitType.Resource_Mineral_Field_Type_2,
+		 * AUnitType.Resource_Mineral_Field_Type_3);
+		 */
 	}
 
 	/**
@@ -154,8 +190,8 @@ public class Select {
 	 */
 	public static List<AUnit> ourMineralFields() {
 		ArrayList<AUnit> ourMineralFields = new ArrayList<AUnit>();
-		
-		for(AUnit mineralField : mineralFields()) {
+
+		for (AUnit mineralField : mineralFields()) {
 			for (AUnit base : ourBases().listSelectedAUnits) {
 				if (mineralField.isInRangeTo(base, 12)) {
 					ourMineralFields.add(mineralField);
@@ -164,28 +200,21 @@ public class Select {
 			}
 		}
 		return ourMineralFields;
-		
+
 		/*
-		Select mineralFields = mineralFields();
-		Iterator<AUnit> unitsIterator = mineralFields.listSelectedAUnits.iterator();
-		while (unitsIterator.hasNext()) {
-			AUnit mineralField = unitsIterator.next();
-			boolean isOurMineralField = false;
-			for (AUnit base : ourBases().listSelectedAUnits) {
-				if (mineralField.isInRangeTo(base, 12)) {
-					isOurMineralField = true;
-					break;
-				}
-			}
-			if (!isOurMineralField)
-				unitsIterator.remove();
-		}
-		return mineralFields; */
+		 * Select mineralFields = mineralFields(); Iterator<AUnit> unitsIterator =
+		 * mineralFields.listSelectedAUnits.iterator(); while (unitsIterator.hasNext())
+		 * { AUnit mineralField = unitsIterator.next(); boolean isOurMineralField =
+		 * false; for (AUnit base : ourBases().listSelectedAUnits) { if
+		 * (mineralField.isInRangeTo(base, 12)) { isOurMineralField = true; break; } }
+		 * if (!isOurMineralField) unitsIterator.remove(); } return mineralFields;
+		 */
 	}
 
 	/**
 	 * Gibt ein Mineralienfeld zurück auf dem weniger als 2 Arbeiter beschäftigt
 	 * sind
+	 * 
 	 * @return
 	 */
 	public static AUnit freeMineralField() {
@@ -209,34 +238,29 @@ public class Select {
 		return this;
 	}
 
-
 	/**
 	 * Selects our workers that are free to construct building or repair a unit.
 	 * That means they mustn't repait any other unit or construct other building.
 	 */
 	public static List<AUnit> ourWorkersFreeToBuildOrRepair() {
-		
-		
+
 		ArrayList<AUnit> selectedUnits = new ArrayList<AUnit>();
-		for(AUnit worker : ourWorkers()) {
+		for (AUnit worker : ourWorkers()) {
 			if (worker.isGatheringMinerals()) {
 				selectedUnits.add(worker);
 			}
 		}
-		
-		return selectedUnits;
-		
-		/*
-		Iterator<AUnit> it = selectedUnits.listSelectedAUnits.iterator();
-		while (it.hasNext()) {
-			AUnit unit = it.next();
-			if (AConstructionManager.isBuilder(unit) || unit.isRepairing() || AScoutManager.isScout(unit)
-					|| unit.isRepairerOfAnyKind()) {
-				it.remove();
-			}
-		}
 
-		return selectedUnits; */
+		return selectedUnits;
+
+		/*
+		 * Iterator<AUnit> it = selectedUnits.listSelectedAUnits.iterator(); while
+		 * (it.hasNext()) { AUnit unit = it.next(); if
+		 * (AConstructionManager.isBuilder(unit) || unit.isRepairing() ||
+		 * AScoutManager.isScout(unit) || unit.isRepairerOfAnyKind()) { it.remove(); } }
+		 * 
+		 * return selectedUnits;
+		 */
 	}
 
 	/**

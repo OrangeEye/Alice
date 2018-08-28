@@ -10,8 +10,8 @@ public class AUnitType {
 	private static final HashMap<UnitType, AUnitType> listAUnitType = new HashMap<UnitType, AUnitType>();
 	
 	private UnitType unitType;
-	private int ID;
-	private static int firstFreeID = 1;
+//	private int ID;
+//	private static int firstFreeID = 1;
 	
 
 	/**
@@ -19,6 +19,7 @@ public class AUnitType {
      * <b>AUnitType</b> class contains numerous helper methods, but if you think some methods are missing you
      * can create missing method here and you can reference original UnitType class via ut() method.
      */
+	/*
     public static AUnitType addUnitType(UnitType ut) {
         if (ut == null) {
             throw new RuntimeException("AUnitType constructor: type is null");
@@ -31,14 +32,14 @@ public class AUnitType {
             listAUnitType.put(ut, unitType);
             return unitType;
         }
-    }
+    } */
     
     private AUnitType(UnitType ut) {
         if (ut == null) {
             throw new RuntimeException("AUnitType constructor: type is null");
         }
         this.unitType = ut;
-        this.ID = firstFreeID++;
+    //    this.ID = firstFreeID++;
     }
     
     /**
@@ -96,7 +97,17 @@ public class AUnitType {
      * Gibt zurück, welche Einheit/Gebäude diese Einheit baut
      */
     public AUnitType getWhatBuildsIt() {
-        return addUnitType(unitType.whatBuilds().first);
+        return getAUnitType(unitType.whatBuilds().first);
+    }
+    
+    public static AUnitType getAUnitType(UnitType unitType) {
+    	//if(listAUnitType.containsKey(unitType))
+    		return listAUnitType.get(unitType);
+    }
+    
+    @Override
+    public String toString() {
+    	return this.unitType.toString();
     }
 	
 	

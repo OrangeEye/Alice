@@ -16,7 +16,7 @@ import bwapi.Unit;
 public class AUnit implements AUnitOrders {
 
 	// Mapping of native unit IDs to AUnit objects
-	private static final Map<Integer, AUnit> listAUnit = new HashMap<Integer, AUnit>();
+	
 	private Unit unit;
 	private boolean isRepairableMechanically;
 	private boolean isHealable;
@@ -25,7 +25,7 @@ public class AUnit implements AUnitOrders {
 	private AUnitType lastCachedType; //der zuletzt gespeichertete AUnitType für diese Einheit
 	private boolean isWorker;
 	private UnitAction unitAction;
-	private ArrayList<AUnit> gatherer;
+	private ArrayList<AUnit> gatherer = new ArrayList<AUnit>();
 	
 	
 	@Override
@@ -47,17 +47,18 @@ public class AUnit implements AUnitOrders {
 		if (u == null) {
 			throw new RuntimeException("AUnit constructor: unit is null");
 		}
-
-		if (listAUnit.containsKey(u.getID())) {
+		
+	/*	if (listAUnit.containsKey(u.getID())) {
 			return listAUnit.get(u.getID());
-		} else {
+		} else { */
 			AUnit unit = new AUnit(u);
-			listAUnit.put(u.getID(), unit);
+		/*	listAUnit.put(u.getID(), unit);
+			
 			if(unit.isType(AUnitType.Resource_Mineral_Field, AUnitType.Resource_Mineral_Field_Type_2,
 				AUnitType.Resource_Mineral_Field_Type_3, AUnitType.Resource_Vespene_Geyser))
-				unit.gatherer = new ArrayList<AUnit>();
+				unit.gatherer = new ArrayList<AUnit>(); */
 			return unit;
-		}
+		
 	}
 
 	protected AUnit(Unit u) {
@@ -83,7 +84,7 @@ public class AUnit implements AUnitOrders {
 	}
 
 	public void refreshType() {
-		lastCachedType = AUnitType.addUnitType(unit.getType());
+		lastCachedType = AUnitType.getAUnitType(unit.getType());
 		isWorker = isType(AUnitType.Terran_SCV, AUnitType.Protoss_Probe, AUnitType.Zerg_Drone);
 	}
 	
@@ -91,7 +92,9 @@ public class AUnit implements AUnitOrders {
 		return this.gatherer.size();
 	}
 	
-	
+	public int getID() {
+		return this.unit.getID();
+	}
 
 	/**
 	 * Überprüft ob diese Einheit einer der Einheitentypen entspricht
@@ -171,7 +174,7 @@ public class AUnit implements AUnitOrders {
   }
     
     public AUnitType getBuildType() {
-        return unit.getBuildType() != null ? AUnitType.addUnitType(unit.getBuildType()) : null;
+        return unit.getBuildType() != null ? AUnitType.getAUnitType(unit.getBuildType()) : null;
     }
     
     public boolean isExists() {
@@ -183,7 +186,7 @@ public class AUnit implements AUnitOrders {
 	 * aktualisiert den zuletzt gespeicherten EinheitenTyp
 	 */
 	public AUnitType getType() {
-		AUnitType type = AUnitType.addUnitType(unit.getType());
+		AUnitType type = AUnitType.getAUnitType(unit.getType());
 		if (AUnitType.Unknown.equals(type)) {
 			if (this.isOurUnit()) {
 				System.err.println("Our unit (" + this + ") returned Unknown type");
@@ -235,7 +238,10 @@ public class AUnit implements AUnitOrders {
         return unit.getPlayer();
     }
 
-
+	@Override
+	public String toString() {
+		return this.getType().toString() + " from " + AGame.getPlayerUs().toString();
+	}
 
 	
 

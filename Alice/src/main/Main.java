@@ -11,10 +11,10 @@ public class Main {
 		ProcessHelper.killStarcraftProcess();
 		
 		//Beendet bestehende ChaosLauncher Prozesse
-		ProcessHelper.killChaosLauncherProcess();
+	//	ProcessHelper.killChaosLauncherProcess();
 
 		//Startet ChaosLauncher
-		ProcessHelper.startChaosLauncherProcess();
+	//	ProcessHelper.startChaosLauncherProcess();
 		
 		Alice alice = new Alice();
 		
