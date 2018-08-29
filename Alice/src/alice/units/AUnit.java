@@ -1,16 +1,13 @@
 package alice.units;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import alice.AGame;
 import alice.enemy.AEnemyUnits;
 import alice.position.APosition;
 import alice.repair.ARepairManager;
 import alice.units.action.UnitAction;
+import bwapi.Order;
 import bwapi.Player;
-import bwapi.Position;
 import bwapi.Unit;
 
 public class AUnit implements AUnitOrders {
@@ -25,9 +22,12 @@ public class AUnit implements AUnitOrders {
 	private AUnitType lastCachedType; //der zuletzt gespeichertete AUnitType für diese Einheit
 	private boolean isWorker;
 	private UnitAction unitAction;
+	private long timerStart;
 	private ArrayList<AUnit> gatherer = new ArrayList<AUnit>();
 	
 	
+
+
 	@Override
 	public Unit u() { 
 		// TODO Auto-generated method stub
@@ -43,6 +43,7 @@ public class AUnit implements AUnitOrders {
 		return this;
 	}
 
+	/*
 	public static AUnit addUnit(Unit u) {
 		if (u == null) {
 			throw new RuntimeException("AUnit constructor: unit is null");
@@ -50,18 +51,18 @@ public class AUnit implements AUnitOrders {
 		
 	/*	if (listAUnit.containsKey(u.getID())) {
 			return listAUnit.get(u.getID());
-		} else { */
+		} else { 
 			AUnit unit = new AUnit(u);
 		/*	listAUnit.put(u.getID(), unit);
 			
 			if(unit.isType(AUnitType.Resource_Mineral_Field, AUnitType.Resource_Mineral_Field_Type_2,
 				AUnitType.Resource_Mineral_Field_Type_3, AUnitType.Resource_Vespene_Geyser))
-				unit.gatherer = new ArrayList<AUnit>(); */
+				unit.gatherer = new ArrayList<AUnit>(); 
 			return unit;
 		
-	}
+	} */
 
-	protected AUnit(Unit u) {
+	public AUnit(Unit u) {
 		if (u == null) {
 			throw new RuntimeException("AUnit constructor: unit is null");
 		}
@@ -154,6 +155,10 @@ public class AUnit implements AUnitOrders {
     public APosition getPosition() {
     	return APosition.create(unit.getPosition());
     }
+    
+	public ArrayList<AUnit> getGatherer() {
+		return gatherer;
+	}
 
     public boolean isConstructing() {
     	return unit.isConstructing();
@@ -206,6 +211,15 @@ public class AUnit implements AUnitOrders {
 	public void setGatherer(AUnit worker) {
 		this.gatherer.add(worker);
 	}
+	
+	public long getTimerStart() {
+		return timerStart;
+	}
+
+	public void setTimerStart(long timerStart) {
+		this.timerStart = timerStart;
+	}
+
 
 	/**
 	 * Prüft ob die Einheit uns gehört
@@ -230,6 +244,14 @@ public class AUnit implements AUnitOrders {
         this.unitAction = unitAction;
     }
 	
+	public Order getOrder() {
+		return unit.getOrder();
+	}
+	
+	public AUnit getTarget() {
+		return unit.getTarget() != null  ? Select.allUnits().get(unit.getTarget().getID()) :  null;	
+	}
+	
 	/**
 	 * Gibt den Spieler zurück, dem diese Einheit gehört
 	 * @return
@@ -240,7 +262,7 @@ public class AUnit implements AUnitOrders {
 
 	@Override
 	public String toString() {
-		return this.getType().toString() + " from " + AGame.getPlayerUs().toString();
+		return this.getType().toString();
 	}
 
 	

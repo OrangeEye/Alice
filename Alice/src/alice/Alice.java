@@ -1,5 +1,10 @@
 package alice;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+
+import alice.units.AUnit;
 import alice.units.Select;
 import bwapi.*;
 import bwta.BWTA;
@@ -11,11 +16,11 @@ public class Alice implements BWEventListener {
 
 	private boolean isStarted = false;
 	private boolean isPaused = false;
-	
+	ArrayList<Long> list = new ArrayList<Long>();
 	private static Alice instance;
 	private Game bwapi;
 	private AGameCommander gameCommander;
-	
+
 	public Alice() {
 		this.instance = this;
 	}
@@ -34,20 +39,48 @@ public class Alice implements BWEventListener {
 			isPaused = false;
 			isStarted = true;
 
-			//Initialisiert den mirror mit dem Listener
+			// Initialisiert den mirror mit dem Listener
 			mirror.getModule().setEventListener(this);
-			//Initialisiert die API und stellt die Verbindung zum Spiel her
+			// Initialisiert die API und stellt die Verbindung zum Spiel her
 			mirror.startGame();
 		}
 	}
 
 	public void onEnd(boolean arg0) {
-		
 
 	}
 
 	public void onFrame() {
-		gameCommander.update();
+		try {
+/*
+			for (AUnit mineralfield : Select.ourMineralFields()) {
+				Iterator<AUnit> it = mineralfield.getGatherer().iterator();
+				while (it.hasNext()) {
+					AUnit gatherer = it.next();
+					if (gatherer.getTarget() != null) {
+						if (gatherer.getTarget().equals(mineralfield)) {
+							System.out.println("true");
+							gatherer.setTimerStart(System.nanoTime());
+						}
+						else {
+							list.add(System.nanoTime() - gatherer.getTimerStart());
+							it.remove();
+						}
+					}
+				}
+
+			}
+			long max = 0;
+			for (Long value : list) {
+				if (value > max)
+					max = value;
+			}
+			System.out.println(max);
+			*/
+			gameCommander.update();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 
@@ -85,30 +118,30 @@ public class Alice implements BWEventListener {
 	 * Wird einmal beim Start ausgeführt
 	 */
 	public void onStart() {
-        // Initialize bwapi object - BWMirror wrapper of C++ BWAPI.
-        bwapi = mirror.getGame();
-        
-        // Initialize Game Commander, eine Klasse die das Spiel steuert
-        gameCommander = new AGameCommander();
+		// Initialize bwapi object - BWMirror wrapper of C++ BWAPI.
+		bwapi = mirror.getGame();
 
-        Race racePlayed = bwapi.self().getRace(); //AGame.getPlayerUs().getRace();
-        if (racePlayed.equals(Race.Terran)) {
-        	AliceConfig.useConfigForTerran();
-        } else if (racePlayed.equals(Race.Zerg)) {
-        	AliceConfig.useConfigForZerg();
-        }
+		// Initialize Game Commander, eine Klasse die das Spiel steuert
+		gameCommander = new AGameCommander();
 
-        System.out.print("Analyzing map... ");
-        BWTA.readMap();
-        BWTA.analyze();
-        System.out.println("Map data ready.");
-        
-        // === Set some BWAPI params ===============================
-        
-        bwapi.setLocalSpeed(AliceConfig.GAME_SPEED); // Change in-game speed (0 - fastest, 20 - normal)
-//        bwapi.setFrameSkip(2); // Number of GUI frames to skip
-//        bwapi.setGUI(false); // Turn off GUI - will speed up game considerably
-        bwapi.enableFlag(1);	// Enable user input - without it you can't control units with mouse
+		Race racePlayed = bwapi.self().getRace(); // AGame.getPlayerUs().getRace();
+		if (racePlayed.equals(Race.Terran)) {
+			AliceConfig.useConfigForTerran();
+		} else if (racePlayed.equals(Race.Zerg)) {
+			AliceConfig.useConfigForZerg();
+		}
+
+		System.out.print("Analyzing map... ");
+		BWTA.readMap();
+		BWTA.analyze();
+		System.out.println("Map data ready.");
+
+		// === Set some BWAPI params ===============================
+
+		bwapi.setLocalSpeed(AliceConfig.GAME_SPEED); // Change in-game speed (0 - fastest, 20 - normal)
+		// bwapi.setFrameSkip(2); // Number of GUI frames to skip
+		// bwapi.setGUI(false); // Turn off GUI - will speed up game considerably
+		bwapi.enableFlag(1); // Enable user input - without it you can't control units with mouse
 	}
 
 	public void onUnitComplete(Unit arg0) {
@@ -125,7 +158,7 @@ public class Alice implements BWEventListener {
 	}
 
 	public void onUnitDiscover(Unit arg0) {
-		System.out.println("onUnitDiscover " + arg0.getType().toString());
+		Select.addNewUnit(arg0);
 	}
 
 	public void onUnitEvade(Unit arg0) {
@@ -152,21 +185,21 @@ public class Alice implements BWEventListener {
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	public static Alice getInstance() {
-        if (instance == null) {
-            instance = new Alice();
-        }
-        return instance;
-    }
-	
+		if (instance == null) {
+			instance = new Alice();
+		}
+		return instance;
+	}
+
 	/**
-     * This method returns bridge connector between Atlantis and Starcraft, which is a BWMirror object. It
-     * provides low-level functionality for functions like canBuildHere etc. For more details, see BWMirror
-     * project documentation.
-     */
-    public static Game getBwapi() {
-        return getInstance().bwapi;
-    }
+	 * This method returns bridge connector between Atlantis and Starcraft, which is
+	 * a BWMirror object. It provides low-level functionality for functions like
+	 * canBuildHere etc. For more details, see BWMirror project documentation.
+	 */
+	public static Game getBwapi() {
+		return getInstance().bwapi;
+	}
 
 }

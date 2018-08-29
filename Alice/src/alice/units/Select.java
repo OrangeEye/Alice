@@ -30,6 +30,7 @@ public class Select {
 	 */
 	private static List<AUnit> ourUnits= new ArrayList<AUnit>(); // Alle unsere Einheiten / Gebäude
 	private static List<AUnit> ourWorkers= new ArrayList<AUnit>(); // Alle unsere Arbeiter
+	private static List<AUnit> ourBuildings= new ArrayList<AUnit>();
 	private static List<AUnit> neutralUnits= new ArrayList<AUnit>();
 	private static List<AUnit> ourDestroyedUnits= new ArrayList<AUnit>();
 	private static List<AUnit> mineralFields= new ArrayList<AUnit>();
@@ -45,11 +46,9 @@ public class Select {
 	}
 
 	public static void addNewUnit(Unit unit) {
-		
 		AUnit newUnit;
 		if (!allUnits.containsKey(unit.getID())) {
-			System.out.println(!allUnits.containsKey(unit.getID()));
-			newUnit = AUnit.addUnit(unit);
+			newUnit = new AUnit(unit);
 			allUnits.put(newUnit.getID(), newUnit);
 		} else
 			return;
@@ -79,6 +78,10 @@ public class Select {
 
 	public static List<AUnit> ourWorkers() {
 		return ourWorkers;
+	}
+	
+	public static Map<Integer, AUnit> allUnits(){
+		return allUnits;
 	}
 
 	public static Select neutral() {
@@ -122,7 +125,7 @@ public class Select {
 				}
 			}
 			if (missed)
-				listSelectedAUnits.remove(nextUnit);
+				it.remove();
 		}
 		return this;
 	}
@@ -193,7 +196,7 @@ public class Select {
 
 		for (AUnit mineralField : mineralFields()) {
 			for (AUnit base : ourBases().listSelectedAUnits) {
-				if (mineralField.isInRangeTo(base, 12)) {
+				if (mineralField.isInRangeTo(base, 250)) {
 					ourMineralFields.add(mineralField);
 					break;
 				}

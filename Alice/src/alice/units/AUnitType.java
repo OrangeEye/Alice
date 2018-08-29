@@ -39,6 +39,7 @@ public class AUnitType {
             throw new RuntimeException("AUnitType constructor: type is null");
         }
         this.unitType = ut;
+        listAUnitType.put(ut, this);
     //    this.ID = firstFreeID++;
     }
     
@@ -101,8 +102,9 @@ public class AUnitType {
     }
     
     public static AUnitType getAUnitType(UnitType unitType) {
-    	//if(listAUnitType.containsKey(unitType))
+    	if(listAUnitType.containsKey(unitType))
     		return listAUnitType.get(unitType);
+    	else return null;
     }
     
     @Override
