@@ -55,6 +55,8 @@ public class Select {
 		
 		if (newUnit.getPlayer().equals(AGame.getPlayerUs())) {
 			ourUnits.add(newUnit);
+			if(newUnit.supplyRequired()>=0)
+			AGame.increaseSupplyUsed(newUnit.getBuildType().getUnitType().supp);
 			if (newUnit.isType(AliceConfig.WORKER))
 				ourWorkers.add(newUnit);
 		}
@@ -152,7 +154,7 @@ public class Select {
 		while (it.hasNext()) {
 			AUnit nextUnit = it.next();
 			if (!nextUnit.isBuilding())
-				listSelectedAUnits.remove(nextUnit);
+				it.remove();
 		}
 		return this;
 	}

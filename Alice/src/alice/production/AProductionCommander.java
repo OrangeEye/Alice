@@ -1,6 +1,6 @@
 package alice.production;
 
-import alice.buildings.managers.ASupplyManager;
+import alice.production.orders.ATerranProduction;
 
 /**
  * Steuert das bauen neuer Gebäude
@@ -12,6 +12,7 @@ public class AProductionCommander {
 	public static void update() {
 		
 		// Prüft ob supply benötigt wird und kümmert sich ggf. darum
-        ASupplyManager.update();
+       // ASupplyManager.update();
+		ATerranProduction.update();
 	}
 }

@@ -146,6 +146,21 @@ public class AUnit implements AUnitOrders {
 
     public boolean isGatheringGas() {
         return unit.isGatheringGas();
+    } 
+    
+    public boolean isMineralField() {
+    	if(this.isType(AUnitType.Resource_Mineral_Field, AUnitType.Resource_Mineral_Field_Type_2,
+				AUnitType.Resource_Mineral_Field_Type_3, AUnitType.Resource_Vespene_Geyser))
+    		return true;
+    	else return false;
+    }
+    
+    public int supplyProvided() {
+    	return this.getType().getUnitType().supplyProvided();
+    }
+    
+    public int supplyRequired() {
+    	return this.getType().getUnitType().supplyRequired();
     }
     
     public int getDistance(APosition target) {
@@ -184,6 +199,10 @@ public class AUnit implements AUnitOrders {
     
     public boolean isExists() {
     	return unit.exists();
+    }
+    
+    public void train(AUnitType unitType) {
+    	this.unit.train(unitType.getUnitType());
     }
 
 	/**

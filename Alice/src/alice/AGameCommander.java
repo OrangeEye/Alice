@@ -9,7 +9,7 @@ public class AGameCommander {
 	public void update() {
 		
 		//führt den Code von jedem Commander aus
-	//	AProductionCommander.update();
+		AProductionCommander.update();
 		APainter.paint();
 		AWorkerCommander.update();
 	}

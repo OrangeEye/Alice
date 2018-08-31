@@ -21,6 +21,23 @@ public class AGame {
         return supplyTotal;
     }
     
+    public static int getMinerals() {
+    	return getPlayerUs().minerals();
+    }
+    
+    
+    public static int getGas() {
+    	return getPlayerUs().gas();
+    }
+    
+    public static void increaseSupplyUsed(int increase) {
+    	supplyUsed += increase;
+    }
+    
+    public static void increaseSupplyTotal(int increase) {
+    	supplyTotal += increase;
+    }
+    
     /**
      * Returns true if user plays as Terran.
      */
