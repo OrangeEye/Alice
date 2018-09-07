@@ -28,12 +28,13 @@ public class Select {
 	 * new HashMap<Integer, AUnit>(); private static Map<Integer, AUnit>
 	 * mineralFields = new HashMap<Integer, AUnit>();
 	 */
-	private static List<AUnit> ourUnits= new ArrayList<AUnit>(); // Alle unsere Einheiten / Gebäude
-	private static List<AUnit> ourWorkers= new ArrayList<AUnit>(); // Alle unsere Arbeiter
-	private static List<AUnit> ourBuildings= new ArrayList<AUnit>();
-	private static List<AUnit> neutralUnits= new ArrayList<AUnit>();
-	private static List<AUnit> ourDestroyedUnits= new ArrayList<AUnit>();
-	private static List<AUnit> mineralFields= new ArrayList<AUnit>();
+	private static List<AUnit> ourUnits = new ArrayList<AUnit>(); // Alle unsere Einheiten / Gebäude
+	private static List<AUnit> ourWorkers = new ArrayList<AUnit>(); // Alle unsere Arbeiter
+	private static List<AUnit> ourBuildings = new ArrayList<AUnit>();
+	private static List<AUnit> neutralUnits = new ArrayList<AUnit>();
+	private static List<AUnit> ourDestroyedUnits = new ArrayList<AUnit>();
+	private static List<AUnit> mineralFields = new ArrayList<AUnit>();
+	private static List<AUnit> gasFields = new ArrayList<AUnit>();
 
 	// CACHED variables
 	private static AUnit _cached_mainBase = null;
@@ -52,21 +53,21 @@ public class Select {
 			allUnits.put(newUnit.getID(), newUnit);
 		} else
 			return;
-		
+
 		if (newUnit.getPlayer().equals(AGame.getPlayerUs())) {
 			ourUnits.add(newUnit);
-			if(newUnit.supplyRequired()>=0)
-			AGame.increaseSupplyUsed(newUnit.getBuildType().getUnitType().supp);
+
 			if (newUnit.isType(AliceConfig.WORKER))
 				ourWorkers.add(newUnit);
 		}
-		
 
 		if (newUnit.getPlayer().equals(AGame.getPlayerNeutral())) {
 			neutralUnits.add(newUnit);
 			if (newUnit.isType(AUnitType.Resource_Mineral_Field, AUnitType.Resource_Mineral_Field_Type_2,
-					AUnitType.Resource_Mineral_Field_Type_3, AUnitType.Resource_Vespene_Geyser))
+					AUnitType.Resource_Mineral_Field_Type_3))
 				mineralFields.add(newUnit);
+			else if (newUnit.isType(AUnitType.Resource_Vespene_Geyser))
+				gasFields.add(newUnit);
 		}
 	}
 
@@ -81,8 +82,8 @@ public class Select {
 	public static List<AUnit> ourWorkers() {
 		return ourWorkers;
 	}
-	
-	public static Map<Integer, AUnit> allUnits(){
+
+	public static Map<Integer, AUnit> allUnits() {
 		return allUnits;
 	}
 
@@ -319,6 +320,10 @@ public class Select {
 	 */
 	public List<AUnit> listUnits() {
 		return this.listSelectedAUnits;
+	}
+
+	public static List<AUnit> getGasFields() {
+		return gasFields;
 	}
 
 	/**

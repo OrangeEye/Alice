@@ -1,8 +1,10 @@
-package alice.units;
+package alice.buildings.managers;
 
 import java.util.Iterator;
 
 import alice.AliceConfig;
+import alice.units.AUnit;
+import alice.units.Select;
 import bwapi.Order;
 
 public class AWorkerCommander {
@@ -32,7 +34,6 @@ public class AWorkerCommander {
 		 * wenn sie noch nicht auf der Liste stehenhe
 		 */
 		for (AUnit worker : Select.ourWorkers()) {
-			System.out.println(worker.isGatheringMinerals());
 			AUnit target = worker.getTarget();
 			if (target != null && target.isMineralField()) {
 				if (!target.getGatherer().contains(worker))

@@ -16,7 +16,7 @@ public class Alice implements BWEventListener {
 
 	private boolean isStarted = false;
 	private boolean isPaused = false;
-	ArrayList<Long> list = new ArrayList<Long>();
+	//ArrayList<Long> list = new ArrayList<Long>();
 	private static Alice instance;
 	private Game bwapi;
 	private AGameCommander gameCommander;
@@ -35,14 +35,18 @@ public class Alice implements BWEventListener {
 	 * Startet den Bot.
 	 */
 	public void run() {
-		if (!isStarted) {
-			isPaused = false;
-			isStarted = true;
+		try {
+			if (!isStarted) {
+				isPaused = false;
+				isStarted = true;
 
-			// Initialisiert den mirror mit dem Listener
-			mirror.getModule().setEventListener(this);
-			// Initialisiert die API und stellt die Verbindung zum Spiel her
-			mirror.startGame();
+				// Initialisiert den mirror mit dem Listener
+				mirror.getModule().setEventListener(this);
+				// Initialisiert die API und stellt die Verbindung zum Spiel her
+				mirror.startGame();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -52,31 +56,6 @@ public class Alice implements BWEventListener {
 
 	public void onFrame() {
 		try {
-/*
-			for (AUnit mineralfield : Select.ourMineralFields()) {
-				Iterator<AUnit> it = mineralfield.getGatherer().iterator();
-				while (it.hasNext()) {
-					AUnit gatherer = it.next();
-					if (gatherer.getTarget() != null) {
-						if (gatherer.getTarget().equals(mineralfield)) {
-							System.out.println("true");
-							gatherer.setTimerStart(System.nanoTime());
-						}
-						else {
-							list.add(System.nanoTime() - gatherer.getTimerStart());
-							it.remove();
-						}
-					}
-				}
-
-			}
-			long max = 0;
-			for (Long value : list) {
-				if (value > max)
-					max = value;
-			}
-			System.out.println(max);
-			*/
 			gameCommander.update();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -118,6 +97,7 @@ public class Alice implements BWEventListener {
 	 * Wird einmal beim Start ausgeführt
 	 */
 	public void onStart() {
+		try {
 		// Initialize bwapi object - BWMirror wrapper of C++ BWAPI.
 		bwapi = mirror.getGame();
 
@@ -142,6 +122,10 @@ public class Alice implements BWEventListener {
 		// bwapi.setFrameSkip(2); // Number of GUI frames to skip
 		// bwapi.setGUI(false); // Turn off GUI - will speed up game considerably
 		bwapi.enableFlag(1); // Enable user input - without it you can't control units with mouse
+		
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
 	}
 
 	public void onUnitComplete(Unit arg0) {

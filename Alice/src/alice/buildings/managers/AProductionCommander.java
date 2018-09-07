@@ -1,4 +1,4 @@
-package alice.production;
+package alice.buildings.managers;
 
 import alice.production.orders.ATerranProduction;
 
@@ -8,11 +8,12 @@ import alice.production.orders.ATerranProduction;
  */
 public class AProductionCommander {
 
-	//produziert Einheiten und Gebäude nach build order 
+	
 	public static void update() {
 		
-		// Prüft ob supply benötigt wird und kümmert sich ggf. darum
-       // ASupplyManager.update();
+		/**
+		 * Steuert die Produktion der Gebäude
+		 */
 		ATerranProduction.update();
 	}
 }

@@ -107,6 +107,14 @@ public class AUnitType {
     	else return null;
     }
     
+    public int supplyProvided() {
+    	return this.getUnitType().supplyProvided();
+    }
+    
+    public int supplyRequired() {
+    	return this.getUnitType().supplyRequired();
+    }
+    
     @Override
     public String toString() {
     	return this.unitType.toString();

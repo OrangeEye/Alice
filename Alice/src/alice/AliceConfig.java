@@ -34,6 +34,9 @@ public class AliceConfig {
         
         AliceConfig.DEF_BUILDING_ANTI_LAND = AUnitType.Terran_Bunker;
         AliceConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Terran_Missile_Turret;
+		
+		AGame.increaseSupplyTotal(AliceConfig.BASE.getUnitType().supplyProvided()); //Für die Base
+		AGame.increaseSupplyUsed(AliceConfig.WORKER.getUnitType().supplyRequired() *4); //Für die ersten 4 Arbeiter 
     }
     
     public static void useConfigForZerg() {
@@ -46,5 +49,9 @@ public class AliceConfig {
         
         AliceConfig.DEF_BUILDING_ANTI_LAND = AUnitType.Zerg_Sunken_Colony;
         AliceConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Zerg_Spore_Colony;
+        
+		AGame.increaseSupplyUsed(AliceConfig.WORKER.getUnitType().supplyRequired() * 4); //Für die ersten 4 Arbeiter 
+		AGame.increaseSupplyTotal(AliceConfig.BASE.getUnitType().supplyProvided()); //Für die Base
+		AGame.increaseSupplyTotal(AUnitType.Zerg_Overlord.getUnitType().supplyProvided()); //Für den Overlord 
     }
 }
