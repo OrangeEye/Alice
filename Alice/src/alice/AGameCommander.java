@@ -11,6 +11,7 @@ public class AGameCommander {
 		//führt den Code von jedem Commander aus
 
 		APainter.paint();
+		AStrategyCommander.update();
 		AProductionCommander.update();
 		AWorkerCommander.update();
 	}
