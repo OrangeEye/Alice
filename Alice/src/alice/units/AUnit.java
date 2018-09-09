@@ -167,7 +167,7 @@ public class AUnit implements AUnitOrders {
     }
     
     public APosition getPosition() {
-    	return APosition.create(unit.getPosition());
+    	return APosition.createFromPosition(unit.getPosition());
     }
     
 	public ArrayList<AUnit> getGatherer() {

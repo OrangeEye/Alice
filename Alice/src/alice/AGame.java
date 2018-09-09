@@ -54,6 +54,9 @@ public class AGame {
 	public static void increaseSupplyTotal(int increase) {
 		supplyTotal += increase;
 	}
+	
+	public static void  sendText() {
+	}
 
 	/**
 	 * Returns true if user plays as Terran.

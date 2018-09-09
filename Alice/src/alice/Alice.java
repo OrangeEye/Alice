@@ -118,15 +118,17 @@ public class Alice implements BWEventListener {
 		BWTA.readMap();
 		BWTA.analyze();
 		System.out.println("Map data ready.");
+		getBwapi().sendText("black sheep wall");
+		
 
 		// === Set some BWAPI params ===============================
-
+		AMap.inititalize();
 		bwapi.setLocalSpeed(AliceConfig.GAME_SPEED); // Change in-game speed (0 - fastest, 20 - normal)
 		// bwapi.setFrameSkip(2); // Number of GUI frames to skip
 		// bwapi.setGUI(false); // Turn off GUI - will speed up game considerably
 		bwapi.enableFlag(1); // Enable user input - without it you can't control units with mouse
 		
-		AMap.inititalize();
+		
 		
 	} catch (Exception e) {
 		e.printStackTrace();
