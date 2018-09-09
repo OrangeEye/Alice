@@ -2,6 +2,8 @@ package alice.information;
 
 import alice.AGame;
 import alice.Alice;
+import alice.position.AMap;
+import alice.position.APosition;
 import alice.production.orders.AZergProduction;
 import alice.units.AUnit;
 import alice.units.AUnitType;
@@ -22,6 +24,7 @@ public class APainter {
 		paintWorkers();
 		paintOverlords();
 		paintBuildOrder();
+		paintBases();
 
 	}
 
@@ -45,6 +48,14 @@ public class APainter {
 	private static void paintOverlords() {
 		for (AUnit overlord : Select.getOurOverlords().values()) {
 			game.drawCircleMap(overlord.getPosition().getPosition(), 2, Color.Purple,true);
+		}
+	}
+	
+	private static void paintBases() {
+		int i=1;
+		for (APosition base : AMap.getOurBasePosition().values()) {
+			game.drawTextMap(base.getPosition(), i+"");
+			i++;
 		}
 	}
 

@@ -35,7 +35,7 @@ public class APosition {
         return position.getY() / 32;
     }
 	
-	public static APosition create(Position position) {
+	public static APosition createFromPosition(Position position) {
         if (instances.containsKey(position)) {
             return instances.get(position);
         }
@@ -46,8 +46,10 @@ public class APosition {
         }
     }
 	
-	public static APosition create(int tileX, int tileY) {
+	public static APosition createFromTile(int tileX, int tileY) {
         return new APosition(tileX * 32, tileY * 32);
     }
+	
+
 	
 }

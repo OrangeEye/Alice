@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
+import alice.position.AMap;
 import alice.units.AUnit;
 import alice.units.Select;
 import bwapi.*;
@@ -110,6 +111,8 @@ public class Alice implements BWEventListener {
 		} else if (racePlayed.equals(Race.Zerg)) {
 			AliceConfig.useConfigForZerg();
 		}
+		
+
 
 		System.out.print("Analyzing map... ");
 		BWTA.readMap();
@@ -122,6 +125,8 @@ public class Alice implements BWEventListener {
 		// bwapi.setFrameSkip(2); // Number of GUI frames to skip
 		// bwapi.setGUI(false); // Turn off GUI - will speed up game considerably
 		bwapi.enableFlag(1); // Enable user input - without it you can't control units with mouse
+		
+		AMap.inititalize();
 		
 	} catch (Exception e) {
 		e.printStackTrace();
