@@ -2,7 +2,6 @@ package alice.units;
 
 import java.util.ArrayList;
 import alice.AGame;
-import alice.enemy.AEnemyUnits;
 import alice.position.APosition;
 import alice.repair.ARepairManager;
 import alice.units.action.UnitAction;
@@ -183,14 +182,17 @@ public class AUnit implements AUnitOrders {
     	return unit.isRepairing();
     }
     
+    public void morph(AUnitType ut) {
+    	this.u().morph(ut.getUnitType());
+    }
+    
     public boolean isRepairerOfAnyKind() {
         return ARepairManager.isRepairerOfAnyKind(this);
     }
     
     public boolean isAlive() { //funktioniert wahrscheinlich nicht auf feindliche Einheiten
 //      return getHP() > 0 && !AtlantisEnemyUnits.isEnemyUnitDestroyed(this);
-      return isExists() && (!AEnemyUnits.isEnemyUnitDestroyed(this) 
-              && !Select.getOurDestroyedUnits().contains(this));
+      return isExists() &&  !Select.getOurDestroyedUnits().containsKey(this.getID());
   }
     
     public AUnitType getBuildType() {

@@ -20,7 +20,7 @@ public class AWorkerCommander {
 	 */
 	private static void sendWorkerToWork() {
 
-		for (AUnit idleWorker : Select.idle(Select.ourWorkers())) {
+		for (AUnit idleWorker : Select.idle(Select.ourWorkers().values())) {
 			AUnit freeMineralField = Select.freeMineralField();
 			if (freeMineralField != null)
 				idleWorker.gather(freeMineralField);
@@ -33,7 +33,7 @@ public class AWorkerCommander {
 		 * Setzt die Mineralienfelder die Arbeiter zu, von denen Sie gesammelt werden,
 		 * wenn sie noch nicht auf der Liste stehenhe
 		 */
-		for (AUnit worker : Select.ourWorkers()) {
+		for (AUnit worker : Select.ourWorkers().values()) {
 			AUnit target = worker.getTarget();
 			if (target != null && target.isMineralField()) {
 				if (!target.getGatherer().contains(worker))
@@ -45,7 +45,7 @@ public class AWorkerCommander {
 		 * Prüft ob die Sammler noch an dem selben Mineralienfeld arbeiten und löscht
 		 * Sie ggf. aus der Sammlerliste
 		 */
-		for (AUnit mineralfield : Select.ourMineralFields()) {
+		for (AUnit mineralfield : Select.ourMineralFields().values()) {
 			Iterator<AUnit> it = mineralfield.getGatherer().iterator();
 			while (it.hasNext()) {
 				AUnit gatherer = it.next();

@@ -46,6 +46,7 @@ public class AliceConfig {
         AliceConfig.BARRACKS = AUnitType.Terran_Barracks;
         AliceConfig.SUPPLY = AUnitType.Zerg_Overlord;
         AliceConfig.GAS_BUILDING = AUnitType.Zerg_Extractor;
+        AliceConfig.DEFAULT_BUILD_ORDER = ABuildOrder.Zerg_3_Hatch_Opener;
         
         AliceConfig.DEF_BUILDING_ANTI_LAND = AUnitType.Zerg_Sunken_Colony;
         AliceConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Zerg_Spore_Colony;

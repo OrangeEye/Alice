@@ -12,7 +12,7 @@ public class ATerranProduction {
 	}
 	
 	private static void getIdleBuildingsToWork() {
-		for (AUnit building : Select.idle(Select.ourBuildings().listUnits())) {
+		for (AUnit building : Select.idle(Select.ourBuildings().listUnits().values())) {
 			if (building.isType(AUnitType.Terran_Command_Center))
 				CommandCenterProduction(building);
 		}

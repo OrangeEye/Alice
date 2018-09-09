@@ -2,7 +2,6 @@ package alice.buildings.managers;
 
 import alice.AGame;
 import alice.AliceConfig;
-import alice.constructing.AConstructionManager;
 import alice.units.AUnitType;
 
 public class ASupplyManager {
@@ -42,11 +41,12 @@ public class ASupplyManager {
 
 	private static void requestAdditionalSupply() {
 
-		AConstructionManager.requestConstructionOf(AliceConfig.SUPPLY);
+	//	AConstructionManager.requestConstructionOf(AliceConfig.SUPPLY);
 
 	}
 
 	private static int requestedConstructionOfSupplyNumber() {
-		return AConstructionManager.countNotFinishedConstructionsOfType(AliceConfig.SUPPLY);
+	//	return AConstructionManager.countNotFinishedConstructionsOfType(AliceConfig.SUPPLY);
+		return 0;
 	}
 }

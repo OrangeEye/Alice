@@ -129,20 +129,24 @@ public class Alice implements BWEventListener {
 	}
 
 	public void onUnitComplete(Unit arg0) {
+		System.out.println("onComplete: " + arg0.getType());
 		Select.addNewUnit(arg0);
 	}
 
 	public void onUnitCreate(Unit arg0) {
 		Select.addNewUnit(arg0);
+		System.out.println("onCreate: " + arg0.getType());
 	}
 
 	public void onUnitDestroy(Unit arg0) {
 		Select.addNewUnit(arg0);
+		System.out.println("onDestroyed: " + arg0.getType());
 
 	}
 
 	public void onUnitDiscover(Unit arg0) {
 		Select.addNewUnit(arg0);
+		System.out.println("onDiscovered: " + arg0.getType());
 	}
 
 	public void onUnitEvade(Unit arg0) {
@@ -156,7 +160,7 @@ public class Alice implements BWEventListener {
 	}
 
 	public void onUnitMorph(Unit arg0) {
-		// TODO Auto-generated method stub
+		System.out.println("onMorph: " + arg0.getType());
 
 	}
 

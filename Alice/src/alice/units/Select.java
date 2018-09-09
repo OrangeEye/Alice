@@ -4,7 +4,6 @@ import java.util.*;
 
 import alice.AGame;
 import alice.AliceConfig;
-import alice.constructing.AConstructionManager;
 import alice.position.APosition;
 import alice.scout.AScoutManager;
 import alice.units.AUnit;
@@ -19,71 +18,83 @@ import bwapi.UnitType;
  */
 public class Select {
 
-	private static Map<Integer, AUnit> allUnits = new HashMap<Integer, AUnit>();
+	private static HashMap<Integer, AUnit> allUnits = new HashMap<Integer, AUnit>();
+
+	private static HashMap<Integer, AUnit> ourUnits = new HashMap<Integer, AUnit>();
+	private static HashMap<Integer, AUnit> ourWorkers = new HashMap<Integer, AUnit>();
+	private static HashMap<Integer, AUnit> ourDestroyedUnits = new HashMap<Integer, AUnit>();
+	private static HashMap<Integer, AUnit> neutralUnits = new HashMap<Integer, AUnit>();
+	private static HashMap<Integer, AUnit> mineralFields = new HashMap<Integer, AUnit>();
+	private static HashMap<Integer, AUnit> ourBuildings = new HashMap<Integer, AUnit>();
+	private static HashMap<Integer, AUnit> ourLarvas = new HashMap<Integer, AUnit>();
+	private static HashMap<Integer, AUnit> ourOverlords = new HashMap<Integer, AUnit>();
+	private static HashMap<Integer, AUnit> gasFields = new HashMap<Integer, AUnit>();
+
 	/*
-	 * private static Map<Integer, AUnit> ourUnits = new HashMap<Integer, AUnit>();
-	 * private static Map<Integer, AUnit> ourWorkers = new HashMap<Integer,
-	 * AUnit>(); private static Map<Integer, AUnit> ourDestroyedUnits = new
-	 * HashMap<Integer, AUnit>(); private static Map<Integer, AUnit> neutralUnits =
-	 * new HashMap<Integer, AUnit>(); private static Map<Integer, AUnit>
-	 * mineralFields = new HashMap<Integer, AUnit>();
+	 * private static List<AUnit> ourUnits = new ArrayList<AUnit>(); // Alle unsere
+	 * Einheiten / Gebäude private static List<AUnit> ourWorkers = new
+	 * ArrayList<AUnit>(); // Alle unsere Arbeiter private static List<AUnit>
+	 * ourBuildings = new ArrayList<AUnit>(); private static List<AUnit> ourLarvas =
+	 * new ArrayList<AUnit>(); private static List<AUnit> neutralUnits = new
+	 * ArrayList<AUnit>(); private static List<AUnit> ourDestroyedUnits = new
+	 * ArrayList<AUnit>(); private static List<AUnit> mineralFields = new
+	 * ArrayList<AUnit>(); private static List<AUnit> gasFields = new
+	 * ArrayList<AUnit>();
 	 */
-	private static List<AUnit> ourUnits = new ArrayList<AUnit>(); // Alle unsere Einheiten / Gebäude
-	private static List<AUnit> ourWorkers = new ArrayList<AUnit>(); // Alle unsere Arbeiter
-	private static List<AUnit> ourBuildings = new ArrayList<AUnit>();
-	private static List<AUnit> neutralUnits = new ArrayList<AUnit>();
-	private static List<AUnit> ourDestroyedUnits = new ArrayList<AUnit>();
-	private static List<AUnit> mineralFields = new ArrayList<AUnit>();
-	private static List<AUnit> gasFields = new ArrayList<AUnit>();
+	/*
+	 * private static List<AUnit> ourUnits = new ArrayList<AUnit>(); // Alle unsere
+	 * Einheiten / Gebäude private static List<AUnit> ourWorkers = new
+	 * ArrayList<AUnit>(); // Alle unsere Arbeiter private static List<AUnit>
+	 * ourBuildings = new ArrayList<AUnit>(); private static List<AUnit> ourLarvas =
+	 * new ArrayList<AUnit>(); private static List<AUnit> neutralUnits = new
+	 * ArrayList<AUnit>(); private static List<AUnit> ourDestroyedUnits = new
+	 * ArrayList<AUnit>(); private static List<AUnit> mineralFields = new
+	 * ArrayList<AUnit>(); private static List<AUnit> gasFields = new
+	 * ArrayList<AUnit>();
+	 */
 
-	// CACHED variables
-	private static AUnit _cached_mainBase = null;
 
-	private List<AUnit> listSelectedAUnits = new ArrayList<AUnit>();
+	private HashMap<Integer, AUnit> listSelectedAUnits = new HashMap<Integer, AUnit>();
 
 	// Constructor is private, use our(), enemy() or neutral() methods
-	protected Select(Collection<AUnit> unitsData) {
-		listSelectedAUnits.addAll(unitsData);
+	protected Select(HashMap<Integer, AUnit> unitsData) {
+
+		for (AUnit unit : unitsData.values()) {
+			listSelectedAUnits.put(unit.getID(), unit);
+		}
+
 	}
 
 	public static void addNewUnit(Unit unit) {
-		AUnit newUnit;
+		AUnit newUnit = new AUnit(unit);
+		/**
+		 * Wenn die Einheit noch nicht aufgenommen wurde, wird AUnit erstellt und in den
+		 * Listen eingetragen. Sollte sich der AUnitType geändert haben werden die
+		 * Einträge geändert
+		 */
 		if (!allUnits.containsKey(unit.getID())) {
-			newUnit = new AUnit(unit);
 			allUnits.put(newUnit.getID(), newUnit);
-		} else
-			return;
+		} else if (!allUnits.get(unit.getID()).getType().getUnitType().equals(unit.getType())) {
+			validateUnit(newUnit);
+		} 
+		else initialize(newUnit);
 
-		if (newUnit.getPlayer().equals(AGame.getPlayerUs())) {
-			ourUnits.add(newUnit);
 
-			if (newUnit.isType(AliceConfig.WORKER))
-				ourWorkers.add(newUnit);
-		}
-
-		if (newUnit.getPlayer().equals(AGame.getPlayerNeutral())) {
-			neutralUnits.add(newUnit);
-			if (newUnit.isType(AUnitType.Resource_Mineral_Field, AUnitType.Resource_Mineral_Field_Type_2,
-					AUnitType.Resource_Mineral_Field_Type_3))
-				mineralFields.add(newUnit);
-			else if (newUnit.isType(AUnitType.Resource_Vespene_Geyser))
-				gasFields.add(newUnit);
-		}
 	}
 
 	public static Select our() {
 		return new Select(ourUnits);
 	}
 
-	private static List<AUnit> ourUnits() {
+	private static HashMap<Integer, AUnit> ourUnits() {
 		return ourUnits;
 	}
 
-	public static List<AUnit> ourWorkers() {
+	public static HashMap<Integer, AUnit> ourWorkers() {
 		return ourWorkers;
 	}
 
-	public static Map<Integer, AUnit> allUnits() {
+	public static HashMap<Integer, AUnit> allUnits() {
 		return allUnits;
 	}
 
@@ -91,8 +102,62 @@ public class Select {
 		return new Select(neutralUnits);
 	}
 
-	public static List<AUnit> getOurDestroyedUnits() {
+	public static HashMap<Integer, AUnit> getOurDestroyedUnits() {
 		return ourDestroyedUnits;
+	}
+
+	public static HashMap<Integer, AUnit> getOurLarvas() {
+		return ourLarvas;
+	}
+
+	private static void validateUnit(AUnit changedUnit) {
+		
+		
+		allUnits.replace(changedUnit.getID(), changedUnit);
+		ourUnits.replace(changedUnit.getID(), changedUnit); 
+		neutralUnits.replace(changedUnit.getID(), changedUnit);
+		
+		ourWorkers.remove(changedUnit.getID());	
+		ourLarvas.remove(changedUnit.getID());
+		ourBuildings.remove(changedUnit.getID());
+		ourOverlords.remove(changedUnit.getID());
+		
+		if (changedUnit.getPlayer().equals(AGame.getPlayerUs())) {
+			if (changedUnit.isType(AliceConfig.WORKER))
+				ourWorkers.put(changedUnit.getID(), changedUnit);
+			if (changedUnit.isType(AUnitType.Zerg_Larva))
+				ourLarvas.put(changedUnit.getID(), changedUnit);
+			if(changedUnit.isBuilding())
+				ourBuildings.put(changedUnit.getID(), changedUnit);
+			if (changedUnit.isType(AUnitType.Zerg_Overlord))
+				ourOverlords.put(changedUnit.getID(), changedUnit);
+		}
+		
+	}
+	
+	private static void initialize(AUnit newUnit) {
+		// Wenn es unsere Unit ist
+		if (newUnit.getPlayer().equals(AGame.getPlayerUs())) {
+			ourUnits.put(newUnit.getID(), newUnit);
+
+			if (newUnit.isType(AliceConfig.WORKER))
+				ourWorkers.put(newUnit.getID(), newUnit);
+			if (newUnit.isType(AUnitType.Zerg_Larva))
+				ourLarvas.put(newUnit.getID(), newUnit);
+			if(newUnit.isBuilding())
+				ourBuildings.put(newUnit.getID(), newUnit);
+			if (newUnit.isType(AUnitType.Zerg_Overlord))
+				ourOverlords.put(newUnit.getID(), newUnit);
+		}
+
+		if (newUnit.getPlayer().equals(AGame.getPlayerNeutral())) {
+			neutralUnits.put(newUnit.getID(), newUnit);
+			if (newUnit.isType(AUnitType.Resource_Mineral_Field, AUnitType.Resource_Mineral_Field_Type_2,
+					AUnitType.Resource_Mineral_Field_Type_3))
+				mineralFields.put(newUnit.getID(), newUnit);
+			else if (newUnit.isType(AUnitType.Resource_Vespene_Geyser))
+				gasFields.put(newUnit.getID(), newUnit);
+		}
 	}
 
 	/**
@@ -100,12 +165,12 @@ public class Select {
 	 */
 	public static Select ourNotFinished() {
 		// Units units = new AUnits();
-		List<AUnit> data = new ArrayList<AUnit>();
+		HashMap<Integer, AUnit> data = new HashMap<Integer, AUnit>();
 
-		for (AUnit unit : ourUnits()) {
+		for (AUnit unit : ourUnits().values()) {
 
 			if (!unit.isCompleted()) {
-				data.add(unit);
+				data.put(unit.getID(), unit);
 			}
 		}
 
@@ -117,7 +182,7 @@ public class Select {
 	 * Fehlern nochmal bei Atlantis reinschauen
 	 */
 	public Select ofType(AUnitType... types) {
-		Iterator<AUnit> it = listSelectedAUnits.iterator();
+		Iterator<AUnit> it = listSelectedAUnits.values().iterator();
 		while (it.hasNext()) {
 			AUnit nextUnit = it.next();
 			boolean missed = true;
@@ -151,7 +216,7 @@ public class Select {
 	}
 
 	public Select buildings() {
-		Iterator<AUnit> it = listSelectedAUnits.iterator();
+		Iterator<AUnit> it = listSelectedAUnits.values().iterator();
 		while (it.hasNext()) {
 			AUnit nextUnit = it.next();
 			if (!nextUnit.isBuilding())
@@ -164,7 +229,7 @@ public class Select {
 	 * Selects only those units which are idle. Idle is unit's class flag so be
 	 * careful with that.
 	 */
-	public static List<AUnit> idle(List<AUnit> unitList) {
+	public static List<AUnit> idle(Collection<AUnit> unitList) {
 		ArrayList<AUnit> idleUnits = new ArrayList<AUnit>();
 		for (AUnit unit : unitList) {
 			if (unit.isIdle()) {
@@ -179,14 +244,12 @@ public class Select {
 	 * 
 	 * @return
 	 */
-	public static List<AUnit> mineralFields() {
+	public static HashMap<Integer, AUnit> mineralFields() {
 		return mineralFields;
-
-		/*
-		 * return Select.neutral().ofType(AUnitType.Resource_Mineral_Field,
-		 * AUnitType.Resource_Mineral_Field_Type_2,
-		 * AUnitType.Resource_Mineral_Field_Type_3);
-		 */
+	}
+	
+	public static HashMap<Integer, AUnit> getOurOverlords() {
+		return ourOverlords;
 	}
 
 	/**
@@ -194,13 +257,13 @@ public class Select {
 	 * 
 	 * @return
 	 */
-	public static List<AUnit> ourMineralFields() {
-		ArrayList<AUnit> ourMineralFields = new ArrayList<AUnit>();
+	public static HashMap<Integer, AUnit> ourMineralFields() {
+		HashMap<Integer, AUnit> ourMineralFields = new HashMap<Integer, AUnit>();
 
-		for (AUnit mineralField : mineralFields()) {
-			for (AUnit base : ourBases().listSelectedAUnits) {
+		for (AUnit mineralField : mineralFields().values()) {
+			for (AUnit base : ourBases().listSelectedAUnits.values()) {
 				if (mineralField.isInRangeTo(base, 250)) {
-					ourMineralFields.add(mineralField);
+					ourMineralFields.put(mineralField.getID(), mineralField);
 					break;
 				}
 			}
@@ -224,7 +287,7 @@ public class Select {
 	 * @return
 	 */
 	public static AUnit freeMineralField() {
-		for (AUnit mineralField : ourMineralFields()) {
+		for (AUnit mineralField : ourMineralFields().values()) {
 			if (mineralField.countGatherer() < 2)
 				return mineralField;
 		}
@@ -235,7 +298,7 @@ public class Select {
 	 * Gibt alle unsere Arbeiter zurück, die Mineralien sammeln
 	 */
 	public Select ourMiningMineralsWorkers() {
-		Iterator<AUnit> unitsIterator = listSelectedAUnits.iterator();
+		Iterator<AUnit> unitsIterator = listSelectedAUnits.values().iterator();
 		while (unitsIterator.hasNext()) {
 			AUnit unit = unitsIterator.next();
 			if (!unit.isGatheringMinerals()) // TODO Überprüfen ob alle Arbeiter auch den Status Mining Minerals haben
@@ -251,7 +314,7 @@ public class Select {
 	public static List<AUnit> ourWorkersFreeToBuildOrRepair() {
 
 		ArrayList<AUnit> selectedUnits = new ArrayList<AUnit>();
-		for (AUnit worker : ourWorkers()) {
+		for (AUnit worker : ourWorkers().values()) {
 			if (worker.isGatheringMinerals()) {
 				selectedUnits.add(worker);
 			}
@@ -274,7 +337,7 @@ public class Select {
 	 */
 	public AUnit clostestOrInRadius(APosition target, int radius) {
 		AUnit nextUnit = null;
-		for (AUnit unit : this.listSelectedAUnits) {
+		for (AUnit unit : this.listSelectedAUnits.values()) {
 			int distance = unit.getDistance(target);
 			if (distance <= radius)
 				return unit;
@@ -293,7 +356,7 @@ public class Select {
 	 * @return
 	 */
 	public Select inRangeTo(AUnit target, int radius) {
-		Iterator<AUnit> it = this.listSelectedAUnits.listIterator();
+		Iterator<AUnit> it = this.listSelectedAUnits.values().iterator();
 		while (it.hasNext()) {
 			AUnit nextUnit = it.next();
 			if (nextUnit.getDistance(target.getPosition()) > radius) {
@@ -304,25 +367,13 @@ public class Select {
 	}
 
 	/**
-	 * Returns first unit being base. For your units this is most likely your main
-	 * base, for enemy it will be first discovered base.
-	 */
-	public static AUnit mainBase() {
-		if (_cached_mainBase == null || !_cached_mainBase.isAlive()) {
-			List<AUnit> bases = ourBases().listUnits();
-			_cached_mainBase = bases.isEmpty() ? Select.ourBuildings().first() : bases.get(0);
-		}
-		return _cached_mainBase;
-	}
-
-	/**
 	 * 
 	 */
-	public List<AUnit> listUnits() {
+	public HashMap<Integer, AUnit> listUnits() {
 		return this.listSelectedAUnits;
 	}
 
-	public static List<AUnit> getGasFields() {
+	public static HashMap<Integer, AUnit> getGasFields() {
 		return gasFields;
 	}
 
@@ -332,6 +383,15 @@ public class Select {
 	 */
 	public AUnit first() {
 		return listSelectedAUnits.isEmpty() ? null : listSelectedAUnits.get(0);
+	}
+
+	public static AUnit first(HashMap<Integer, AUnit> list) {
+		if (list != null && list.size() > 0)
+			for (AUnit next : list.values()) {
+				return next;
+			}
+
+		return null;
 	}
 
 	/**
