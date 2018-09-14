@@ -15,26 +15,44 @@ import bwta.*;
 public class AMap {
 
 	private static HashMap<String, APosition> ourBasePosition = new HashMap<String, APosition>();
+	private static BaseLocation mainBaseLocation;
 
 	public static void inititalize() {
-		System.out.println(BWTA.getBaseLocations().size());
 		firstPosition();
-
 		localizeOthers();
 
 	}
 
+	
+	/**
+	 * Setzt die Mainbase an Position 1 und als lastBaseLocation für localizeOthers
+	 */
 	private static void firstPosition() {
-		ourBasePosition.put("Main_Base", new APosition(AGame.getPlayerUs().getStartLocation().toPosition()));
+		mainBaseLocation = BWTA.getStartLocation(AGame.getPlayerUs());
+		ourBasePosition.put("Main_Base", new APosition(mainBaseLocation.getPosition()));
+		
+		/*
+		System.out.println(ourBasePosition.get("Main_Base").toString());
+		for (BaseLocation base : BWTA.getBaseLocations()) {
+			System.out.println(base.getPosition());
+			if (ourBasePosition.containsValue(new APosition(base.getPosition()))) {
+				lastBaseLocation = base;
+				break;
+			}
+		} */
+
 	}
 
 	private static void localizeOthers() {
 		BaseLocation closest = null;
-		ourBasePosition.
 		for (BaseLocation base : BWTA.getBaseLocations()) {
-
+			System.out.println("Distance main base " + base.getGroundDistance(mainBaseLocation));
+			if (closest != null) {
+				System.out.println("Distance closest base " + closest.getGroundDistance(mainBaseLocation));
+			}
+			
 			if (!ourBasePosition.containsValue(new APosition(base.getPosition())) && !base.isIsland()
-					&& (closest == null || base.getGroundDistance(closest) < base.getGroundDistance(lastBase)))
+					&& (closest == null || mainBaseLocation.getGroundDistance(base) < mainBaseLocation.getGroundDistance(closest)))
 				closest = base;
 
 		}

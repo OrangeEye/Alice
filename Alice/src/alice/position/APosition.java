@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import bwapi.Position;
+import main.Graph;
 
 public class APosition {
 	private static final Map<Position, APosition> instances = new HashMap<>();
@@ -11,6 +12,7 @@ public class APosition {
 
 	public APosition(Position position) {
 		this.position = position;
+		Graph graph = new Graph();
 	}
 
 	public Position getPosition() {
@@ -49,6 +51,16 @@ public class APosition {
 	public static APosition createFromTile(int tileX, int tileY) {
         return new APosition(tileX * 32, tileY * 32);
     }
+	
+	@Override
+	public String toString() {
+		return this.getPosition().toString();
+	}
+	
+	@Override 
+	public boolean equals(APosition position) {
+		
+	}
 	
 
 	
