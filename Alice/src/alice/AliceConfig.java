@@ -1,7 +1,7 @@
 package alice;
 
 
-import alice.production.orders.ABuildOrder;
+import alice.production.orders.AZergBuildOrder;
 import alice.units.AUnitType;
 import bwapi.Race;
 
@@ -14,8 +14,8 @@ public class AliceConfig {
     public static AUnitType GAS_BUILDING = null;
     public static AUnitType DEF_BUILDING_ANTI_LAND = null;
     public static AUnitType DEFENSIVE_BUILDING_ANTI_AIR = null;
-    public static ABuildOrder DEFAULT_BUILD_ORDER = null;
-    public static int GAME_SPEED = 20;
+    public static AZergBuildOrder DEFAULT_BUILD_ORDER = null;
+    public static int GAME_SPEED = 10;
 
     // =========================================================
     
@@ -46,7 +46,7 @@ public class AliceConfig {
         AliceConfig.BARRACKS = AUnitType.Terran_Barracks;
         AliceConfig.SUPPLY = AUnitType.Zerg_Overlord;
         AliceConfig.GAS_BUILDING = AUnitType.Zerg_Extractor;
-        AliceConfig.DEFAULT_BUILD_ORDER = ABuildOrder.Zerg_3_Hatch_Opener;
+        AliceConfig.DEFAULT_BUILD_ORDER = AZergBuildOrder.getCurrentBuildOrder();
         
         AliceConfig.DEF_BUILDING_ANTI_LAND = AUnitType.Zerg_Sunken_Colony;
         AliceConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Zerg_Spore_Colony;

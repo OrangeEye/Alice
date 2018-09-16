@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import alice.AGame;
+import alice.graph.Graph;
+import alice.graph.Node;
 import bwta.*;
 
 /**
@@ -14,88 +16,48 @@ import bwta.*;
  */
 public class AMap {
 
-	private static HashMap<String, APosition> ourBasePosition = new HashMap<String, APosition>();
-	private static BaseLocation mainBaseLocation;
+	// private static HashMap<String, APosition> ourBasePosition = new
+	// HashMap<String, APosition>();
+	private static Graph<APosition> basePositions = new Graph<APosition>();
+	private static HashMap<APosition, BaseLocation> baseLocations = new HashMap<APosition, BaseLocation>();
+	private static APosition mainBasePosition;
 
 	public static void inititalize() {
-		firstPosition();
-		localizeOthers();
+		addNodes();
+		addEdges();
 
 	}
 
-	
-	/**
-	 * Setzt die Mainbase an Position 1 und als lastBaseLocation für localizeOthers
-	 */
-	private static void firstPosition() {
-		mainBaseLocation = BWTA.getStartLocation(AGame.getPlayerUs());
-		ourBasePosition.put("Main_Base", new APosition(mainBaseLocation.getPosition()));
-		
-		/*
-		System.out.println(ourBasePosition.get("Main_Base").toString());
+	private static void addNodes() {
+		mainBasePosition = new APosition(BWTA.getStartLocation(AGame.getPlayerUs()));
 		for (BaseLocation base : BWTA.getBaseLocations()) {
-			System.out.println(base.getPosition());
-			if (ourBasePosition.containsValue(new APosition(base.getPosition()))) {
-				lastBaseLocation = base;
-				break;
+			if (!base.equals((BWTA.getStartLocation(AGame.getPlayerUs())))) {
+				basePositions.addNode(new APosition(base));
+				baseLocations.put(new APosition(base), base);
 			}
-		} */
-
+		}
 	}
 
-	private static void localizeOthers() {
-		BaseLocation closest = null;
-		for (BaseLocation base : BWTA.getBaseLocations()) {
-			System.out.println("Distance main base " + base.getGroundDistance(mainBaseLocation));
-			if (closest != null) {
-				System.out.println("Distance closest base " + closest.getGroundDistance(mainBaseLocation));
+	private static void addEdges() {
+		ArrayList<APosition> visited = new ArrayList<APosition>();
+
+		for (APosition position1 : baseLocations.keySet()) {
+			for (APosition position2 : baseLocations.keySet()) {
+				if (position1.equals(position2))
+					continue;
+
+				basePositions.addEdge(position1, position2,
+						baseLocations.get(position1).getGroundDistance(baseLocations.get(position2)));
 			}
-			
-			if (!ourBasePosition.containsValue(new APosition(base.getPosition())) && !base.isIsland()
-					&& (closest == null || mainBaseLocation.getGroundDistance(base) < mainBaseLocation.getGroundDistance(closest)))
-				closest = base;
-
-		}
-
-		if (closest != null) {
-			addBaseLocation(new APosition(closest.getPosition()));
-			localizeOthers();
-		}
-
-	}
-
-	private static void addBaseLocation(APosition position) {
-
-		switch (ourBasePosition.size()) {
-		case 1:
-			ourBasePosition.put("2_Base", position);
-			break;
-
-		case 2:
-			ourBasePosition.put("3_Base", position);
-			break;
-
-		case 3:
-			ourBasePosition.put("4_Base", position);
-			break;
-
-		case 4:
-			ourBasePosition.put("5_Base", position);
-			break;
-
-		case 5:
-			ourBasePosition.put("6_Base", position);
-			break;
-
-		case 6:
-			ourBasePosition.put("7_Base", position);
-			break;
-
 		}
 	}
 
-	public static HashMap<String, APosition> getOurBasePosition() {
-		return ourBasePosition;
+	public static ArrayList<APosition> getBasePositions() {
+		return basePositions.getConnections(mainBasePosition);
+	}
+
+	public static APosition getMainBasePosition() {
+		return mainBasePosition;
 	}
 
 }

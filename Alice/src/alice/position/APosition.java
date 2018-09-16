@@ -3,8 +3,10 @@ package alice.position;
 import java.util.HashMap;
 import java.util.Map;
 
+import alice.units.AUnitType;
 import bwapi.Position;
-import main.Graph;
+import bwapi.TilePosition;
+import bwta.BaseLocation;
 
 public class APosition {
 	private static final Map<Position, APosition> instances = new HashMap<>();
@@ -12,56 +14,76 @@ public class APosition {
 
 	public APosition(Position position) {
 		this.position = position;
-		Graph graph = new Graph();
 	}
 
 	public Position getPosition() {
 		return position;
 	}
-	
+
 	public APosition(int pixelX, int pixelY) {
-        this.position = new Position(pixelX, pixelY);
-    }
-	
+		this.position = new Position(pixelX, pixelY);
+	}
+
+	public APosition(BaseLocation baseLocation) {
+		this.position = new Position(baseLocation.getX(), baseLocation.getY());
+	}
+
 	/**
-     * Returns X coordinate in tiles, 1 tile = 32 pixels.
-     */
-    public int getTileX() {
-        return position.getX() / 32;
-    }
-    
-    /**
-     * Returns Y coordinate in tiles, 1 tile = 32 pixels.
-     */
-    public int getTileY() {
-        return position.getY() / 32;
-    }
+	 * Returns X coordinate in tiles, 1 tile = 32 pixels.
+	 */
+	public int getTileX() {
+		return position.getX() / 32; 
+	}
 	
+	public double getDistance(APosition position) {
+		return this.position.getDistance(position.getPosition());
+	}
+	
+	public TilePosition toTilePosition() {
+		return position.toTilePosition();
+	}
+
+	/**
+	 * Returns Y coordinate in tiles, 1 tile = 32 pixels.
+	 */
+	public int getTileY() {
+		return position.getY() / 32;
+	}
+
 	public static APosition createFromPosition(Position position) {
-        if (instances.containsKey(position)) {
-            return instances.get(position);
-        }
-        else {
-          //  APosition position = new APosition(position);
-            instances.put(position, new APosition(position));
-            return instances.get(position);
-        }
-    }
-	
+		if (instances.containsKey(position)) {
+			return instances.get(position);
+		} else {
+			// APosition position = new APosition(position);
+			instances.put(position, new APosition(position));
+			return instances.get(position);
+		}
+	}
+
 	public static APosition createFromTile(int tileX, int tileY) {
-        return new APosition(tileX * 32, tileY * 32);
-    }
+		return new APosition(tileX * 32, tileY * 32);
+	}
 	
+	public  TilePosition toBuildTilePosition(AUnitType unitType) {
+		return new TilePosition(this.getTileX() - unitType.getUnitType().tileWidth() /2 ,this.getTileY() - unitType.getUnitType().tileHeight() /2 );
+	}
+	
+
 	@Override
 	public String toString() {
 		return this.getPosition().toString();
 	}
-	
-	@Override 
-	public boolean equals(APosition position) {
-		
-	}
-	
+
 
 	
+	@Override
+	public boolean equals(Object position) {
+		try {
+			 return this.getPosition().getX() == ((APosition) position).getPosition().getX() && this.getPosition().getY() == ((APosition) position).getPosition().getY();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	} 
+
 }

@@ -5,7 +5,9 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import alice.position.AMap;
+import alice.production.orders.AZergBuildOrder;
 import alice.units.AUnit;
+import alice.units.AUnitType;
 import alice.units.Select;
 import bwapi.*;
 import bwta.BWTA;
@@ -118,7 +120,7 @@ public class Alice implements BWEventListener {
 		BWTA.readMap();
 		BWTA.analyze();
 		System.out.println("Map data ready.");
-		getBwapi().sendText("black sheep wall");
+		//getBwapi().sendText("black sheep wall");
 		
 
 		// === Set some BWAPI params ===============================
@@ -137,12 +139,19 @@ public class Alice implements BWEventListener {
 
 	public void onUnitComplete(Unit arg0) {
 		System.out.println("onComplete: " + arg0.getType());
+		
 		Select.addNewUnit(arg0);
+		
+		AUnit morphedUnit = new AUnit(arg0);
+		AUnitType ut = AUnitType.getAUnitType(arg0.getType());
+		AZergBuildOrder.finishOrder(ut, morphedUnit);
+		
+
 	}
 
 	public void onUnitCreate(Unit arg0) {
 		Select.addNewUnit(arg0);
-		System.out.println("onCreate: " + arg0.getType());
+		System.out.println("onCreate: " + arg0.getType() + " ID:" + arg0.getID());
 	}
 
 	public void onUnitDestroy(Unit arg0) {
@@ -167,8 +176,14 @@ public class Alice implements BWEventListener {
 	}
 
 	public void onUnitMorph(Unit arg0) {
-		System.out.println("onMorph: " + arg0.getType());
-
+		System.out.println("onMorph: " + arg0.getType()  + " ID:" + arg0.getID());
+		AUnit morphedUnit = new AUnit(arg0);
+		AUnitType ut = AUnitType.getAUnitType(arg0.getType());
+		AZergBuildOrder.finishOrder(ut, morphedUnit);
+		
+		if(morphedUnit.isType(AUnitType.Resource_Vespene_Geyser)) {
+			Select.removeVespeneGeyser(morphedUnit.getPosition());
+		}
 	}
 
 	public void onUnitRenegade(Unit arg0) {

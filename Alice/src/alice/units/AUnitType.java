@@ -62,8 +62,7 @@ public class AUnitType {
 	}
 
 	public boolean isSpecialBuilding() {
-		return isGasBuilding() || isBase()
-				|| isType(AUnitType.Terran_Refinery, AUnitType.Protoss_Assimilator, AUnitType.Zerg_Extractor);
+		return isGasBuilding() || isBase();
 	}
 
 	public UnitType getUnitType() {

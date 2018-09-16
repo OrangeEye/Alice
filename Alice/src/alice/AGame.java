@@ -2,6 +2,7 @@ package alice;
 
 import alice.units.AUnit;
 import alice.units.AUnitType;
+import bwapi.Game;
 import bwapi.Player;
 import bwapi.Race;
 
@@ -20,9 +21,21 @@ public class AGame {
 	/**
 	 * Number of supply totally available.
 	 */
+	
+	
+	
 	public static double getSupplyTotal() {
 		return supplyTotal;
 	}
+	
+	public static int getFPS() {
+		return Alice.getBwapi().getFPS();
+	}
+	
+	public static double getAverageFPS() {
+		return Alice.getBwapi().getAverageFPS();
+	}
+
 
 	public static int getMinerals() {
 		return getPlayerUs().minerals();

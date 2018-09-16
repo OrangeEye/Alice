@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import alice.AGame;
 import alice.position.APosition;
 import alice.repair.ARepairManager;
-import alice.units.action.UnitAction;
 import bwapi.Order;
 import bwapi.Player;
 import bwapi.Unit;
@@ -14,15 +13,17 @@ public class AUnit implements AUnitOrders {
 	// Mapping of native unit IDs to AUnit objects
 	
 	private Unit unit;
+	private int ID=-1;
 	private boolean isRepairableMechanically;
 	private boolean isHealable;
 	private boolean isMilitaryBuildingAntiGround;
 	private boolean isMilitaryBuildingAntiAir;
 	private AUnitType lastCachedType; //der zuletzt gespeichertete AUnitType für diese Einheit
 	private boolean isWorker;
-	private UnitAction unitAction;
 	private long timerStart;
 	private ArrayList<AUnit> gatherer = new ArrayList<AUnit>();
+	private AUnitOrder unitOrder = AUnitOrder._IDLE; 
+	
 	
 	
 
@@ -42,24 +43,6 @@ public class AUnit implements AUnitOrders {
 		return this;
 	}
 
-	/*
-	public static AUnit addUnit(Unit u) {
-		if (u == null) {
-			throw new RuntimeException("AUnit constructor: unit is null");
-		}
-		
-	/*	if (listAUnit.containsKey(u.getID())) {
-			return listAUnit.get(u.getID());
-		} else { 
-			AUnit unit = new AUnit(u);
-		/*	listAUnit.put(u.getID(), unit);
-			
-			if(unit.isType(AUnitType.Resource_Mineral_Field, AUnitType.Resource_Mineral_Field_Type_2,
-				AUnitType.Resource_Mineral_Field_Type_3, AUnitType.Resource_Vespene_Geyser))
-				unit.gatherer = new ArrayList<AUnit>(); 
-			return unit;
-		
-	} */
 
 	public AUnit(Unit u) {
 		if (u == null) {
@@ -71,7 +54,7 @@ public class AUnit implements AUnitOrders {
 
 		// Cached type helpers
 		refreshType();
-
+		this.ID=u.getID();
 		// Repair & Heal
 		this.isRepairableMechanically = isBuilding() || isVehicle();
 		this.isHealable = isInfantry() || isWorker();
@@ -93,7 +76,7 @@ public class AUnit implements AUnitOrders {
 	}
 	
 	public int getID() {
-		return this.unit.getID();
+		return this.ID;
 	}
 
 	/**
@@ -136,7 +119,7 @@ public class AUnit implements AUnitOrders {
     }
 	
 	public boolean isIdle() {
-		return unit.isIdle();
+		return this.getUnitOrder().equals(AUnitOrder._IDLE);
 	}
 	
 	public boolean isGatheringMinerals() {
@@ -182,15 +165,21 @@ public class AUnit implements AUnitOrders {
     	return unit.isRepairing();
     }
     
-    public void morph(AUnitType ut) {
-    	this.u().morph(ut.getUnitType());
-    }
+
     
     public boolean isRepairerOfAnyKind() {
         return ARepairManager.isRepairerOfAnyKind(this);
     }
     
-    public boolean isAlive() { //funktioniert wahrscheinlich nicht auf feindliche Einheiten
+    public AUnitOrder getUnitOrder() {
+		return unitOrder;
+	}
+
+	public void setUnitOrder(AUnitOrder unitOrder) {
+		this.unitOrder = unitOrder;
+	}
+
+	public boolean isAlive() { //funktioniert wahrscheinlich nicht auf feindliche Einheiten
 //      return getHP() > 0 && !AtlantisEnemyUnits.isEnemyUnitDestroyed(this);
       return isExists() &&  !Select.getOurDestroyedUnits().containsKey(this.getID());
   }
@@ -203,9 +192,7 @@ public class AUnit implements AUnitOrders {
     	return unit.exists();
     }
     
-    public void train(AUnitType unitType) {
-    	this.unit.train(unitType.getUnitType());
-    }
+
 
 	/**
 	 * Gibt den EinheitenTyp der Einheit oder Unkown zurück (Durch Kriegsnebel) und 
@@ -224,10 +211,7 @@ public class AUnit implements AUnitOrders {
 		}
 	}
 	
-	public void gather(AUnit target) {
-		unit.gather(target.u());
-		target.setGatherer(this);
-	}
+
 	
 	public void setGatherer(AUnit worker) {
 		this.gatherer.add(worker);
@@ -261,9 +245,6 @@ public class AUnit implements AUnitOrders {
 			return false;
 	}
 	
-	public void setUnitAction(UnitAction unitAction) {
-        this.unitAction = unitAction;
-    }
 	
 	public Order getOrder() {
 		return unit.getOrder();
@@ -280,10 +261,17 @@ public class AUnit implements AUnitOrders {
 	public Player getPlayer() {
         return unit.getPlayer();
     }
+	
 
 	@Override
 	public String toString() {
 		return this.getType().toString();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null) return false;
+		return this.getID() == ((AUnit) obj).getID();
 	}
 
 	

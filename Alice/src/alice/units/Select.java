@@ -17,42 +17,18 @@ import bwapi.UnitType;
  * Klasse eine Liste von Einheiten
  */
 public class Select {
-
+	// ID / Unit
 	private static HashMap<Integer, AUnit> allUnits = new HashMap<Integer, AUnit>();
+	private static HashMap<Integer, AUnit> neutralUnits = new HashMap<Integer, AUnit>();
+	private static HashMap<Integer, AUnit> mineralFields = new HashMap<Integer, AUnit>();
+	private static HashMap<Integer, AUnit> gasFields = new HashMap<Integer, AUnit>();
 
 	private static HashMap<Integer, AUnit> ourUnits = new HashMap<Integer, AUnit>();
 	private static HashMap<Integer, AUnit> ourWorkers = new HashMap<Integer, AUnit>();
 	private static HashMap<Integer, AUnit> ourDestroyedUnits = new HashMap<Integer, AUnit>();
-	private static HashMap<Integer, AUnit> neutralUnits = new HashMap<Integer, AUnit>();
-	private static HashMap<Integer, AUnit> mineralFields = new HashMap<Integer, AUnit>();
 	private static HashMap<Integer, AUnit> ourBuildings = new HashMap<Integer, AUnit>();
 	private static HashMap<Integer, AUnit> ourLarvas = new HashMap<Integer, AUnit>();
 	private static HashMap<Integer, AUnit> ourOverlords = new HashMap<Integer, AUnit>();
-	private static HashMap<Integer, AUnit> gasFields = new HashMap<Integer, AUnit>();
-
-	/*
-	 * private static List<AUnit> ourUnits = new ArrayList<AUnit>(); // Alle unsere
-	 * Einheiten / Gebäude private static List<AUnit> ourWorkers = new
-	 * ArrayList<AUnit>(); // Alle unsere Arbeiter private static List<AUnit>
-	 * ourBuildings = new ArrayList<AUnit>(); private static List<AUnit> ourLarvas =
-	 * new ArrayList<AUnit>(); private static List<AUnit> neutralUnits = new
-	 * ArrayList<AUnit>(); private static List<AUnit> ourDestroyedUnits = new
-	 * ArrayList<AUnit>(); private static List<AUnit> mineralFields = new
-	 * ArrayList<AUnit>(); private static List<AUnit> gasFields = new
-	 * ArrayList<AUnit>();
-	 */
-	/*
-	 * private static List<AUnit> ourUnits = new ArrayList<AUnit>(); // Alle unsere
-	 * Einheiten / Gebäude private static List<AUnit> ourWorkers = new
-	 * ArrayList<AUnit>(); // Alle unsere Arbeiter private static List<AUnit>
-	 * ourBuildings = new ArrayList<AUnit>(); private static List<AUnit> ourLarvas =
-	 * new ArrayList<AUnit>(); private static List<AUnit> neutralUnits = new
-	 * ArrayList<AUnit>(); private static List<AUnit> ourDestroyedUnits = new
-	 * ArrayList<AUnit>(); private static List<AUnit> mineralFields = new
-	 * ArrayList<AUnit>(); private static List<AUnit> gasFields = new
-	 * ArrayList<AUnit>();
-	 */
-
 
 	private HashMap<Integer, AUnit> listSelectedAUnits = new HashMap<Integer, AUnit>();
 
@@ -72,18 +48,18 @@ public class Select {
 		 * Listen eingetragen. Sollte sich der AUnitType geändert haben werden die
 		 * Einträge geändert
 		 */
-		if (!allUnits.containsKey(unit.getID())) {
-			allUnits.put(newUnit.getID(), newUnit);
-		} else if (!allUnits.get(unit.getID()).getType().getUnitType().equals(unit.getType())) {
-			validateUnit(newUnit);
-		} 
-		else initialize(newUnit);
+		initialize(newUnit);
 
+		/*
+		 * if (!allUnits.containsKey(unit.getID())) { initialize(newUnit); } else if
+		 * (!allUnits.get(unit.getID()).getType().getUnitType().equals(unit.getType()))
+		 * { validateUnit(newUnit); }
+		 */
 
 	}
 
-	public static Select our() {
-		return new Select(ourUnits);
+	public static HashMap<Integer, AUnit> getOurUnits() {
+		return ourUnits;
 	}
 
 	private static HashMap<Integer, AUnit> ourUnits() {
@@ -110,32 +86,38 @@ public class Select {
 		return ourLarvas;
 	}
 
+	/**
+	 * Wenn sich der UnitType geändert hat, wird die Einheit neu zugeordnet
+	 * 
+	 * @param changedUnit
+	 */
 	private static void validateUnit(AUnit changedUnit) {
-		
-		
+
 		allUnits.replace(changedUnit.getID(), changedUnit);
-		ourUnits.replace(changedUnit.getID(), changedUnit); 
+		ourUnits.replace(changedUnit.getID(), changedUnit);
 		neutralUnits.replace(changedUnit.getID(), changedUnit);
-		
-		ourWorkers.remove(changedUnit.getID());	
+
+		ourWorkers.remove(changedUnit.getID());
 		ourLarvas.remove(changedUnit.getID());
 		ourBuildings.remove(changedUnit.getID());
 		ourOverlords.remove(changedUnit.getID());
-		
+
 		if (changedUnit.getPlayer().equals(AGame.getPlayerUs())) {
 			if (changedUnit.isType(AliceConfig.WORKER))
 				ourWorkers.put(changedUnit.getID(), changedUnit);
 			if (changedUnit.isType(AUnitType.Zerg_Larva))
 				ourLarvas.put(changedUnit.getID(), changedUnit);
-			if(changedUnit.isBuilding())
+			if (changedUnit.isBuilding())
 				ourBuildings.put(changedUnit.getID(), changedUnit);
 			if (changedUnit.isType(AUnitType.Zerg_Overlord))
 				ourOverlords.put(changedUnit.getID(), changedUnit);
 		}
-		
+
 	}
-	
+
 	private static void initialize(AUnit newUnit) {
+		clearLists(newUnit.getID());
+		allUnits.put(newUnit.getID(), newUnit);
 		// Wenn es unsere Unit ist
 		if (newUnit.getPlayer().equals(AGame.getPlayerUs())) {
 			ourUnits.put(newUnit.getID(), newUnit);
@@ -144,7 +126,7 @@ public class Select {
 				ourWorkers.put(newUnit.getID(), newUnit);
 			if (newUnit.isType(AUnitType.Zerg_Larva))
 				ourLarvas.put(newUnit.getID(), newUnit);
-			if(newUnit.isBuilding())
+			if (newUnit.isBuilding())
 				ourBuildings.put(newUnit.getID(), newUnit);
 			if (newUnit.isType(AUnitType.Zerg_Overlord))
 				ourOverlords.put(newUnit.getID(), newUnit);
@@ -157,6 +139,29 @@ public class Select {
 				mineralFields.put(newUnit.getID(), newUnit);
 			else if (newUnit.isType(AUnitType.Resource_Vespene_Geyser))
 				gasFields.put(newUnit.getID(), newUnit);
+		}
+	}
+
+	public static void clearLists(Integer ID) {
+		allUnits.remove(ID);
+		neutralUnits.remove(ID);
+		mineralFields.remove(ID);
+		gasFields.remove(ID);
+		ourUnits.remove(ID);
+		ourWorkers.remove(ID);
+		ourDestroyedUnits.remove(ID);
+		ourBuildings.remove(ID);
+		ourLarvas.remove(ID);
+		ourOverlords.remove(ID);
+	}
+
+	public static void removeVespeneGeyser(APosition position) {
+		for (AUnit vespeneGeyser : Select.getGasFields().values()) {
+			if (vespeneGeyser.getPosition().equals(position)) {
+				Select.getGasFields().remove(vespeneGeyser.getID());
+				return;
+			}
+
 		}
 	}
 
@@ -181,38 +186,37 @@ public class Select {
 	 * Gibt nur die Einheiten von dem Parameter zurück. Wurde überarbeitet, bei
 	 * Fehlern nochmal bei Atlantis reinschauen
 	 */
-	public Select ofType(AUnitType... types) {
-		Iterator<AUnit> it = listSelectedAUnits.values().iterator();
-		while (it.hasNext()) {
-			AUnit nextUnit = it.next();
-			boolean missed = true;
-			for (AUnitType type : types) {
-				if (nextUnit.getType().equals(type)) {
-					missed = false;
-					break;
-				}
-			}
-			if (missed)
-				it.remove();
+	public static ArrayList<AUnit> ofType(Collection<AUnit> unitList, AUnitType... types) {
+
+		ArrayList<AUnit> list = new ArrayList<AUnit>();
+
+		for (AUnit unit : unitList) {
+			if (unit.isType(types))
+				list.add(unit);
 		}
-		return this;
+		return list;
+
+		/*
+		 * Iterator<AUnit> it = listSelectedAUnits.values().iterator();
+		 * 
+		 * while (it.hasNext()) { AUnit nextUnit = it.next(); boolean missed = true; for
+		 * (AUnitType type : types) { if (nextUnit.getType().equals(type)) { missed =
+		 * false; break; } } if (missed) it.remove(); } return this;
+		 */
 	}
 
-	public static Select ourBases() {
+	public static ArrayList<AUnit> ourBases() {
 
-		if (AGame.playsAsZerg()) {
-			return our().ofType(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, AUnitType.Zerg_Hive,
-					AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center);
-		} else {
-			return our().ofType(AliceConfig.BASE);
-		}
+		return Select.ofType(ourBuildings.values(), AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, AUnitType.Zerg_Hive,
+				AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center);
+
 	}
 
 	/**
 	 * Selects all our finished buildings.
 	 */
-	public static Select ourBuildings() {
-		return our().buildings();
+	public static HashMap<Integer, AUnit> ourBuildings() {
+		return ourBuildings;
 	}
 
 	public Select buildings() {
@@ -247,7 +251,7 @@ public class Select {
 	public static HashMap<Integer, AUnit> mineralFields() {
 		return mineralFields;
 	}
-	
+
 	public static HashMap<Integer, AUnit> getOurOverlords() {
 		return ourOverlords;
 	}
@@ -261,7 +265,7 @@ public class Select {
 		HashMap<Integer, AUnit> ourMineralFields = new HashMap<Integer, AUnit>();
 
 		for (AUnit mineralField : mineralFields().values()) {
-			for (AUnit base : ourBases().listSelectedAUnits.values()) {
+			for (AUnit base : ourBases()) {
 				if (mineralField.isInRangeTo(base, 250)) {
 					ourMineralFields.put(mineralField.getID(), mineralField);
 					break;
@@ -307,6 +311,20 @@ public class Select {
 		return this;
 	}
 
+	public static void removeNotExistingUnits() {
+		AUnit notExisting = null;
+		for (AUnit notExists : Select.allUnits().values()) {
+			if (!notExists.isExists()) {
+				notExisting = notExists;
+				break;
+			}
+
+		}
+
+		if (notExisting != null)
+			Select.clearLists(notExisting.getID());
+	}
+
 	/**
 	 * Selects our workers that are free to construct building or repair a unit.
 	 * That means they mustn't repait any other unit or construct other building.
@@ -335,9 +353,10 @@ public class Select {
 	/**
 	 * Gibt die Einheit zurück die am nächsten ist oder die innerhalb des Radius ist
 	 */
-	public AUnit clostestOrInRadius(APosition target, int radius) {
+	public static AUnit clostestOrInRadius(Collection<AUnit> unitList, APosition target, int radius) {
+
 		AUnit nextUnit = null;
-		for (AUnit unit : this.listSelectedAUnits.values()) {
+		for (AUnit unit : unitList) {
 			int distance = unit.getDistance(target);
 			if (distance <= radius)
 				return unit;

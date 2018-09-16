@@ -2,47 +2,62 @@ package alice.production.orders;
 
 import java.util.LinkedList;
 
+import alice.AliceConfig;
+import alice.production.AOrder;
+import alice.units.AUnit;
 import alice.units.AUnitType;
 
-public class AZergBuildOrder extends ABuildOrder {
+public class AZergBuildOrder {
 
+	private static AZergBuildOrder Zerg_3_Hatch_Opener = new AZergBuildOrder("Zerg_3_Hatch_Opener");
+	public static AZergBuildOrder currentBuildOrder = Zerg_3_Hatch_Opener;
+
+	private String buildName;
+	private LinkedList<AOrder> buildOrderList;
+	private boolean dynamic;
 	private boolean doExtractorTrick;
 
-	public AZergBuildOrder(String order) {
-		super(order);
-		this.order = order;
-		switch (order) {
+	protected boolean isDynamic() {
+		return dynamic;
+	}
+
+	protected String getBuildName() {
+		return buildName;
+	}
+
+	public AZergBuildOrder(String BuildName) {
+		this.buildName = BuildName;
+		switch (BuildName) {
 		case "Zerg_3_Hatch_Opener":
 			dynamic = false;
 			doExtractorTrick = true;
-			buildOrder = Zerg_3_Hatch_Opener_update();
+			buildOrderList = Zerg_3_Hatch_Opener_initialize();
 			break;
 		}
 	}
 
-	private LinkedList<AUnitType> Zerg_3_Hatch_Opener_update() {
-		LinkedList<AUnitType> buildOrder = new LinkedList<AUnitType>();
-		buildOrder.add(AUnitType.Zerg_Drone);
-		buildOrder.add(AUnitType.Zerg_Drone);
-		buildOrder.add(AUnitType.Zerg_Drone);
-		buildOrder.add(AUnitType.Zerg_Drone);
-		buildOrder.add(AUnitType.Zerg_Drone);
-		buildOrder.add(AUnitType.Zerg_Overlord); // 9 supply
-		buildOrder.add(AUnitType.Zerg_Extractor);
-		buildOrder.add(AUnitType.Zerg_Drone);
-		buildOrder.add(AUnitType.Zerg_Drone);
-		buildOrder.add(AUnitType.Zerg_Drone);
-		buildOrder.add(AUnitType.Zerg_Hatchery); // 12 supply
-		buildOrder.add(AUnitType.Zerg_Spawning_Pool); // 11 supply
-		buildOrder.add(AUnitType.Zerg_Drone);
-		buildOrder.add(AUnitType.Zerg_Drone);
-		buildOrder.add(AUnitType.Zerg_Zergling); // 13 supply + pool fertig
-		buildOrder.add(AUnitType.Zerg_Zergling);
-		buildOrder.add(AUnitType.Zerg_Drone);
-		buildOrder.add(AUnitType.Zerg_Drone);
-		buildOrder.add(AUnitType.Zerg_Drone);
-		buildOrder.add(AUnitType.Zerg_Overlord); // 16 supply evtl. anpassen
-
+	private LinkedList<AOrder> Zerg_3_Hatch_Opener_initialize() {
+		LinkedList<AOrder> buildOrder = new LinkedList<AOrder>();
+		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
+		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
+		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
+		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
+		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
+		buildOrder.add(new AOrder(AUnitType.Zerg_Overlord)); // 9 supply
+		buildOrder.add(new AOrder(AUnitType.Zerg_Extractor));
+		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
+		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
+		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
+		buildOrder.add(new AOrder(AUnitType.Zerg_Hatchery)); // 12 supply
+		buildOrder.add(new AOrder(AUnitType.Zerg_Spawning_Pool)); // 11 supply
+		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
+		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
+		buildOrder.add(new AOrder(AUnitType.Zerg_Zergling)); // 13 supply + pool fertig
+		buildOrder.add(new AOrder(AUnitType.Zerg_Zergling));
+		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
+		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
+		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
+		buildOrder.add(new AOrder(AUnitType.Zerg_Overlord)); // 16 supply evtl. anpassen
 		return buildOrder;
 	}
 
@@ -54,12 +69,40 @@ public class AZergBuildOrder extends ABuildOrder {
 		this.doExtractorTrick = false;
 	}
 
-	@Override
-	LinkedList<AUnitType> produceRightNow() {
-		if (!isDynamic()) {
-			return this.buildOrder;
+	public static AZergBuildOrder getCurrentBuildOrder() {
+		return currentBuildOrder;
+	}
+
+	public LinkedList<AOrder> getBuildOrderList() {
+		return buildOrderList;
+	}
+
+	/**
+	 * kann null zurückgeben
+	 * 
+	 * @return
+	 */
+	public static AOrder getNextOrder() {
+
+		for (AOrder order : AliceConfig.DEFAULT_BUILD_ORDER.buildOrderList) {
+			if (order.getStatus().equals(AOrder.STATUS_NOT_STARTED)) {
+				return order;
+			}
 		}
 		return null;
+	}
+
+	/**
+	 * Setzt den Status einer Order auf finish
+	 */
+	public static void finishOrder(AUnitType finished, AUnit builder) {
+
+		for (AOrder order : Zerg_3_Hatch_Opener.buildOrderList) {
+				if (builder.equals(order.getBuilder()) && order.getAUnitType().equals(finished)) {
+					order.setStatus(AOrder.STATUS_FINISHED);
+					return;
+				}
+		}
 	}
 
 }
