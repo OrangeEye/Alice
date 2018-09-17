@@ -84,11 +84,11 @@ public class AZergProduction {
 	private static void buildSpecialBuilding(AUnitType nextUnitType, AOrder order) {
 		if (nextUnitType.isGasBuilding()) {
 			if (extractorTrick)
-				extractorTrick( order);
+				extractorTrick(order);
 		}
 	}
 
-	private static void extractorTrick( AOrder order) {
+	private static void extractorTrick(AOrder order) {
 		AUnit gasFieldMain = null;
 		double gasFieldDistance = Double.MAX_VALUE;
 		for (AUnit gasField : Select.getGasFields().values()) {
@@ -102,13 +102,13 @@ public class AZergProduction {
 	}
 
 	private static void addSupply(AUnitType ut) {
-		AGame.increaseSupplyUsed(ut);
+		AGame.increaseSupplyUsed(ut.supplyRequired());
 	}
-	
-	private static void buildExtractor(AUnit gasField,AOrder order) {
+
+	private static void buildExtractor(AUnit gasField, AOrder order) {
 		AUnit worker = Select.clostestOrInRadius(Select.ourWorkersFreeToBuildOrRepair(), gasField.getPosition(), 250);
-		if(worker != null)
-		worker.build(AUnitType.Zerg_Extractor, gasField.getPosition(), order);
+		if (worker != null)
+			worker.build(AUnitType.Zerg_Extractor, gasField.getPosition(), order);
 	}
 
 	public static LinkedList<AOrder> getBuildOrderList() {

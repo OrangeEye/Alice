@@ -48,6 +48,10 @@ public class Select {
 		 * Listen eingetragen. Sollte sich der AUnitType geändert haben werden die
 		 * Einträge geändert
 		 */
+		if(newUnit.isCompleted() && newUnit.supplyProvided() >0)
+			AGame.increaseSupplyTotal(newUnit.supplyProvided());
+			
+		
 		initialize(newUnit);
 
 		/*
@@ -116,6 +120,10 @@ public class Select {
 	}
 
 	private static void initialize(AUnit newUnit) {
+		
+		if(allUnits.containsKey(newUnit.getID()) && allUnits.get(newUnit.getID()).isType(newUnit.getType()))
+			return;
+		
 		clearLists(newUnit.getID());
 		allUnits.put(newUnit.getID(), newUnit);
 		// Wenn es unsere Unit ist
@@ -321,8 +329,12 @@ public class Select {
 
 		}
 
-		if (notExisting != null)
+		if (notExisting != null) {
+			if(Select.ourUnits().containsKey(notExisting.getID()))
+				AGame.decreaseSupplyUsedOrTotal(notExisting.getType());
 			Select.clearLists(notExisting.getID());
+	
+		}
 	}
 
 	/**

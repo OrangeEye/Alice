@@ -15,8 +15,8 @@ import bwapi.Race;
  */
 public class AGame {
 
-	private static double supplyTotal; // Maximale Versorgung (200)
-	private static double supplyUsed;// Versorgung in Benutzung (200)
+	private static double supplyTotal = 18; // Maximale Versorgung (200)
+	private static double supplyUsed = 8;// Versorgung in Benutzung (200)
 
 	/**
 	 * Number of supply totally available.
@@ -51,6 +51,7 @@ public class AGame {
 	 * 
 	 * @param ut
 	 */
+	/*
 	public static void increaseSupplyUsed(AUnitType ut) {
 
 		if (ut.supplyRequired() > 0)
@@ -58,7 +59,7 @@ public class AGame {
 
 		if (ut.supplyProvided() > 0)
 			AGame.increaseSupplyTotal(ut.supplyProvided());
-	}
+	} */
 
 	public static void increaseSupplyUsed(int increase) {
 		supplyUsed += increase;
@@ -66,6 +67,22 @@ public class AGame {
 
 	public static void increaseSupplyTotal(int increase) {
 		supplyTotal += increase;
+	}
+	
+	public static void decreaseSupplyUsedOrTotal(AUnitType ut) {
+		if (ut.supplyRequired() > 0)
+			AGame.decreaseSupplyUsed(ut.supplyRequired());
+
+		if (ut.supplyProvided() > 0)
+			AGame.decreaseSupplyTotal(ut.supplyProvided());
+	}
+	
+	private static void decreaseSupplyUsed(int increase) {
+		supplyUsed -= increase;
+	}
+
+	private static void decreaseSupplyTotal(int increase) {
+		supplyTotal -= increase;
 	}
 	
 	public static void  sendText() {
