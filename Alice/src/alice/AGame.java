@@ -34,6 +34,15 @@ public class AGame {
 	public static int getFPS() {
 		return Alice.getBwapi().getFPS();
 	}
+	
+	public static int getFrameCount() {
+		return Alice.getBwapi().getFrameCount();
+	}
+	
+	public static int getGameTime() {
+		return getFrameCount() /42 ;
+				
+	}
 
 	public static double getAverageFPS() {
 		return Alice.getBwapi().getAverageFPS();
@@ -149,6 +158,10 @@ public class AGame {
 		 * Select.removeVespeneGeyser(morphedUnit.getPosition()); }
 		 */
 
+	}
+	
+	public static void handleOnDestroyed(AUnit destroyedUnit) {
+		AZergBuildOrder.removeDestroyedBuilder(destroyedUnit);
 	}
 
 	/**

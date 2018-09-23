@@ -14,7 +14,7 @@ public class AGameCommander {
 		
 		//führt den Code von jedem Commander aus
 		CodeProfiler.startMeasuring(CodeProfiler.ASPECT_PAINTING);
-		
+	//	if(AGame.getFrameCount() % 2 ==0)
 		APainter.paint();
 		
 		CodeProfiler.endMeasuring(CodeProfiler.ASPECT_PAINTING);

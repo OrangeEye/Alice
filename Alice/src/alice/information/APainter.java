@@ -1,5 +1,7 @@
 package alice.information;
 
+import java.text.DecimalFormat;
+
 import alice.AGame;
 import alice.Alice;
 import alice.position.AMap;
@@ -35,14 +37,10 @@ public class APainter {
 
 	private static void paintProfiler() {
 
-		/*
-		 * for (String profileName : CodeProfiler.getAspectsTimeConsumption().keySet())
-		 * { game.drawTextScreen(500, 250 + i , profileName +
-		 * ": "+CodeProfiler.getAspectsTimeConsumption().get(profileName)); i+=10; }
-		 */
-
+		DecimalFormat f = new DecimalFormat("#0.00");
 		int i = 0;
-		game.drawTextScreen(500, 240, "FPS: " + AGame.getFPS() + " d: " + AGame.getAverageFPS());
+		game.drawTextScreen(500, 230, "Time: " + AGame.getGameTime());
+		game.drawTextScreen(500, 240, "FPS: " + AGame.getFPS() + " d: " + f.format(AGame.getAverageFPS()) );
 		for (String profileName : CodeProfiler.getAspectsTimeConsumption().keySet()) {
 			if (profileName.equals(CodeProfiler.ASPECT_Global))
 				continue;

@@ -32,9 +32,13 @@ public interface AUnitOrders {
 	}
 
 	default void build(AUnitType unitType, APosition position, AOrder order) {
-		this.u().build(unitType.getUnitType(), position.toBuildTilePosition(unitType));
-		this.unit().setUnitOrder(AUnitOrder._BUILDING);
-		order.setStatus(AOrder.STAUS_IN_ORDER);
+		order.setBuilder(this.unit());
+		if (this.u().build(unitType.getUnitType(), position.toBuildTilePosition(unitType))) {
+			this.unit().setUnitOrder(AUnitOrder._BUILDING);
+			order.setStatus(AOrder.STAUS_IN_ORDER);
+		} else if (this.u().move(position.getPosition())) {
+			this.unit().setUnitOrder(AUnitOrder._MOVE_TO_BUILD);
+		}
 	}
 
 	default void train(AUnitType unitType) {
@@ -43,14 +47,14 @@ public interface AUnitOrders {
 	}
 
 	default boolean gather(AUnit target) {
-		if(this.u().gather(target.u())) {
-		target.setGatherer(this.unit());
+		if (this.u().gather(target.u())) {
+			target.setGatherer(this.unit());
 
-		if (Select.ourMineralFields().containsKey(target.getID()))
-			this.unit().setUnitOrder(AUnitOrder._MINING_MINERALS);
-		else
-			this.unit().setUnitOrder(AUnitOrder._GATHERING_GAS);
-		return true;
+			if (Select.ourMineralFields().containsKey(target.getID()))
+				this.unit().setUnitOrder(AUnitOrder._MINING_MINERALS);
+			else
+				this.unit().setUnitOrder(AUnitOrder._GATHERING_GAS);
+			return true;
 		}
 		return false;
 	}

@@ -19,6 +19,8 @@ public class AMap {
 	// private static HashMap<String, APosition> ourBasePosition = new
 	// HashMap<String, APosition>();
 	private static Graph<APosition> basePositions = new Graph<APosition>();
+
+	// Die Expansionsplätze in kürzester Reinfolge zur Mainbase
 	private static HashMap<APosition, BaseLocation> baseLocations = new HashMap<APosition, BaseLocation>();
 	private static APosition mainBasePosition;
 
@@ -58,6 +60,12 @@ public class AMap {
 
 	public static APosition getMainBasePosition() {
 		return mainBasePosition;
+	}
+
+	public static APosition getNextExpandPosition() {
+		if (getBasePositions().size() > 0)
+			return getBasePositions().get(0);
+		return null;
 	}
 
 }

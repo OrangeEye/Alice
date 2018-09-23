@@ -164,22 +164,25 @@ public class Alice implements BWEventListener {
 
 	public void onUnitDestroy(Unit arg0) {
 		Select.addNewUnit(new AUnit(arg0));
-		System.out.println("onDestroyed: " + arg0.getType());
+		System.out.println("onDestroyed: " + arg0.getType() + " ID:" + arg0.getID());
+		
+		AUnit destroyedUnit = new AUnit(arg0);
+		AGame.handleOnDestroyed(destroyedUnit);
 
 	}
 
 	public void onUnitDiscover(Unit arg0) {
 		Select.addNewUnit(new AUnit(arg0));
-		System.out.println("onDiscovered: " + arg0.getType());
+		System.out.println("onDiscovered: " + arg0.getType() + " ID:" + arg0.getID());
 	}
 
 	public void onUnitEvade(Unit arg0) {
-		System.out.println("onUnitEvade: " + arg0.getType());
+		System.out.println("onUnitEvade: " + arg0.getType() + " ID:" + arg0.getID());
 
 	}
 
 	public void onUnitHide(Unit arg0) {
-		System.out.println("onUnitHide: " + arg0.getType());
+		System.out.println("onUnitHide: " + arg0.getType() + " ID:" + arg0.getID());
 
 	}
 
@@ -195,12 +198,12 @@ public class Alice implements BWEventListener {
 	public void onUnitRenegade(Unit arg0) {
 		AUnit newUnit = new AUnit(arg0);
 		Select.addNewUnit(newUnit);
-		System.out.println("onUnitRenegade: " + arg0.getType());
+		System.out.println("onUnitRenegade: " + arg0.getType() + " ID:" + arg0.getID());
 
 	}
 
 	public void onUnitShow(Unit arg0) {
-		System.out.println("onUnitShow: " + arg0.getType());
+		System.out.println("onUnitShow: " + arg0.getType() + " ID:" + arg0.getID());
 
 	}
 

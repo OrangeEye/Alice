@@ -45,10 +45,13 @@ public class AZergBuildOrder {
 		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
 		buildOrder.add(new AOrder(AUnitType.Zerg_Overlord)); // 9 supply
 		buildOrder.add(new AOrder(AUnitType.Zerg_Extractor));
+		buildOrder.peekLast().setMineralDelay(10);
 		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
 		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
 		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
 		buildOrder.add(new AOrder(AUnitType.Zerg_Hatchery)); // 12 supply
+		buildOrder.peekLast().setAdditionalInfo(AOrder.INFO_IS_EXPANSION); //setzt die Hatch als Expansion an
+		buildOrder.peekLast().setMineralDelay(-100);
 		buildOrder.add(new AOrder(AUnitType.Zerg_Spawning_Pool)); // 11 supply
 		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
 		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
@@ -75,6 +78,13 @@ public class AZergBuildOrder {
 
 	public LinkedList<AOrder> getBuildOrderList() {
 		return buildOrderList;
+	}
+	
+	public static void removeDestroyedBuilder(AUnit destroyedUnit) {
+		for(AOrder order : getCurrentBuildOrder().getBuildOrderList()) {
+			if(order.getBuilder() != null && order.getBuilder().equals(destroyedUnit))
+				order.setBuilder(null);
+		}
 	}
 
 	/**
