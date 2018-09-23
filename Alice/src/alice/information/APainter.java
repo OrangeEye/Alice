@@ -30,6 +30,7 @@ public class APainter {
 		paintProfiler();
 		paintVespeneGas();
 		paintOurBuildings();
+		paintReservedRessources();
 	}
 
 	private static void paintProfiler() {
@@ -50,6 +51,10 @@ public class APainter {
 			i += 10;
 		}
 
+	}
+	
+	private static void paintReservedRessources() {
+		game.drawTextScreen(430, 20,"reserved: M: " +AZergProduction.getMineralReserved() +" G: " + AZergProduction.getGasReserved());
 	}
 
 	private static void paintBaseRadius() {

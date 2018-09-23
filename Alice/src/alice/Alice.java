@@ -137,10 +137,16 @@ public class Alice implements BWEventListener {
 	}
 	}
 
-	public void onUnitComplete(Unit arg0) {
+	public void onUnitComplete(Unit arg0) { 
 		System.out.println("onComplete: " + arg0.getType());
 		
-		Select.addNewUnit(arg0);
+		AUnit newUnit = new AUnit(arg0);
+		Select.addNewUnit(newUnit);
+		
+		
+		
+		if (newUnit.supplyProvided() > 0)
+			AGame.increaseSupplyTotal(newUnit.supplyProvided());
 		
 		AUnit morphedUnit = new AUnit(arg0);
 		AUnitType ut = AUnitType.getAUnitType(arg0.getType());
@@ -150,28 +156,28 @@ public class Alice implements BWEventListener {
 	}
 
 	public void onUnitCreate(Unit arg0) {
-		Select.addNewUnit(arg0);
+		Select.addNewUnit(new AUnit(arg0));
 		System.out.println("onCreate: " + arg0.getType() + " ID:" + arg0.getID());
 	}
 
 	public void onUnitDestroy(Unit arg0) {
-		Select.addNewUnit(arg0);
+		Select.addNewUnit(new AUnit(arg0));
 		System.out.println("onDestroyed: " + arg0.getType());
 
 	}
 
 	public void onUnitDiscover(Unit arg0) {
-		Select.addNewUnit(arg0);
+		Select.addNewUnit(new AUnit(arg0));
 		System.out.println("onDiscovered: " + arg0.getType());
 	}
 
 	public void onUnitEvade(Unit arg0) {
-		// TODO Auto-generated method stub
+		System.out.println("onUnitEvade: " + arg0.getType());
 
 	}
 
 	public void onUnitHide(Unit arg0) {
-		// TODO Auto-generated method stub
+		System.out.println("onUnitHide: " + arg0.getType());
 
 	}
 
@@ -187,12 +193,14 @@ public class Alice implements BWEventListener {
 	}
 
 	public void onUnitRenegade(Unit arg0) {
-		// TODO Auto-generated method stub
+		AUnit newUnit = new AUnit(arg0);
+		Select.addNewUnit(newUnit);
+		System.out.println("onUnitRenegade: " + arg0.getType());
 
 	}
 
 	public void onUnitShow(Unit arg0) {
-		// TODO Auto-generated method stub
+		System.out.println("onUnitShow: " + arg0.getType());
 
 	}
 

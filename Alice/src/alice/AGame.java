@@ -15,7 +15,7 @@ import bwapi.Race;
  */
 public class AGame {
 
-	private static double supplyTotal = 18; // Maximale Versorgung (200)
+	private static double supplyTotal = 0; // Maximale Versorgung (200)
 	private static double supplyUsed = 8;// Versorgung in Benutzung (200)
 
 	/**

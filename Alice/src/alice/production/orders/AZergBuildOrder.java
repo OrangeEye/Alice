@@ -98,7 +98,7 @@ public class AZergBuildOrder {
 	public static void finishOrder(AUnitType finished, AUnit builder) {
 
 		for (AOrder order : Zerg_3_Hatch_Opener.buildOrderList) {
-				if (builder.equals(order.getBuilder()) && order.getAUnitType().equals(finished)) {
+				if ( order.getAUnitType().equals(finished) && ( builder.equals(order.getBuilder())|| order.getBuilder() == null)) { //beim Extractor verschwindet der builder
 					order.setStatus(AOrder.STATUS_FINISHED);
 					return;
 				}

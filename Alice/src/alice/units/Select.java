@@ -41,17 +41,13 @@ public class Select {
 
 	}
 
-	public static void addNewUnit(Unit unit) {
-		AUnit newUnit = new AUnit(unit);
+	public static void addNewUnit(AUnit newUnit) {
 		/**
 		 * Wenn die Einheit noch nicht aufgenommen wurde, wird AUnit erstellt und in den
 		 * Listen eingetragen. Sollte sich der AUnitType geändert haben werden die
 		 * Einträge geändert
 		 */
-		if(newUnit.isCompleted() && newUnit.supplyProvided() >0)
-			AGame.increaseSupplyTotal(newUnit.supplyProvided());
-			
-		
+
 		initialize(newUnit);
 
 		/*
@@ -120,10 +116,10 @@ public class Select {
 	}
 
 	private static void initialize(AUnit newUnit) {
-		
-		if(allUnits.containsKey(newUnit.getID()) && allUnits.get(newUnit.getID()).isType(newUnit.getType()))
+
+		if (allUnits.containsKey(newUnit.getID()) && allUnits.get(newUnit.getID()).isType(newUnit.getType()))
 			return;
-		
+
 		clearLists(newUnit.getID());
 		allUnits.put(newUnit.getID(), newUnit);
 		// Wenn es unsere Unit ist
@@ -293,6 +289,19 @@ public class Select {
 	}
 
 	/**
+	 * Gibt die erste Einheit zurück, die zu dem AUnitType passt.
+	 * 
+	 * @param unitType
+	 * @return
+	 */
+	public static AUnit getUnit(AUnitType unitType) {
+		ArrayList<AUnit> list = Select.ofType(Select.getOurUnits().values(), unitType);
+		if (list != null && list.size() > 0)
+			return list.get(0);
+		return null;
+	}
+
+	/**
 	 * Gibt ein Mineralienfeld zurück auf dem weniger als 2 Arbeiter beschäftigt
 	 * sind
 	 * 
@@ -330,10 +339,10 @@ public class Select {
 		}
 
 		if (notExisting != null) {
-			if(Select.ourUnits().containsKey(notExisting.getID()))
+			if (Select.ourUnits().containsKey(notExisting.getID()))
 				AGame.decreaseSupplyUsedOrTotal(notExisting.getType());
 			Select.clearLists(notExisting.getID());
-	
+
 		}
 	}
 

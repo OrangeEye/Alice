@@ -32,6 +32,8 @@ public class AZergProduction {
 
 		if (nextOrder.isUnitType())
 			buildNextUnit(nextOrder);
+		
+		cancelBuilding();
 	}
 
 	/**
@@ -53,6 +55,15 @@ public class AZergProduction {
 		}
 
 	}
+	
+	private static void cancelBuilding() {
+		AUnit toCancel=null;
+		if(extractorTrick && AGame.getSupplyUsed() ==18) 
+			toCancel = Select.getUnit(AUnitType.Zerg_Extractor);
+		
+		if(toCancel != null)
+			extractorTrick = !toCancel.cancelConstruction();
+	}
 
 	/**
 	 * Prüft ob genug Ressourcen und Versorgung dafür da ist. Eingerechnet die
@@ -63,8 +74,11 @@ public class AZergProduction {
 	 */
 	private static boolean notEnoughRessourcesAndSupply(AUnitType ut) {
 		if (AGame.getGas() < ut.gasPrice() + gasReserved || AGame.getMinerals() < ut.mineralPrice() + mineralReserved
-				|| AGame.getSupplyFree() < ut.supplyRequired())
+				|| AGame.getSupplyFree() < ut.supplyRequired()) {
+
 			return true;
+			
+		}
 
 		return false;
 	}
@@ -114,5 +128,15 @@ public class AZergProduction {
 	public static LinkedList<AOrder> getBuildOrderList() {
 		return AZergBuildOrder.getCurrentBuildOrder().getBuildOrderList();
 	}
+
+	public static int getMineralReserved() {
+		return mineralReserved;
+	}
+
+	public static int getGasReserved() {
+		return gasReserved;
+	}
+	
+	
 
 }

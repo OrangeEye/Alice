@@ -3,6 +3,7 @@ package alice.units;
 import java.util.ArrayList;
 import alice.AGame;
 import alice.position.APosition;
+import alice.production.orders.AZergBuildOrder;
 import alice.repair.ARepairManager;
 import bwapi.Order;
 import bwapi.Player;
@@ -98,6 +99,11 @@ public class AUnit implements AUnitOrders {
 			return true;
 		else
 			return false;
+	}
+	
+	public boolean cancelConstruction() {
+		AZergBuildOrder.finishOrder(this.getType(), this);
+		return this.unit.cancelConstruction();
 	}
 	
 	public boolean isVehicle() {
@@ -199,7 +205,7 @@ public class AUnit implements AUnitOrders {
 	 * aktualisiert den zuletzt gespeicherten EinheitenTyp
 	 */
 	public AUnitType getType() {
-		AUnitType type = AUnitType.getAUnitType(unit.getType());
+		 /* AUnitType type = AUnitType.getAUnitType(unit.getType());
 		if (AUnitType.Unknown.equals(type)) {
 			if (this.isOurUnit()) {
 				System.err.println("Our unit (" + this + ") returned Unknown type");
@@ -208,7 +214,8 @@ public class AUnit implements AUnitOrders {
 		} else {
 			lastCachedType = type;
 			return type;
-		}
+		} */
+		return this.lastCachedType;
 	}
 	
 
