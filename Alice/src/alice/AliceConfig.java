@@ -15,7 +15,7 @@ public class AliceConfig {
     public static AUnitType DEF_BUILDING_ANTI_LAND = null;
     public static AUnitType DEFENSIVE_BUILDING_ANTI_AIR = null;
     public static AZergBuildOrder DEFAULT_BUILD_ORDER = null;
-    public static int GAME_SPEED = 10;
+    public static int GAME_SPEED = 20;
 
     // =========================================================
     

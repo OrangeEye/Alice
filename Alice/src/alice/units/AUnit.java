@@ -3,6 +3,7 @@ package alice.units;
 import java.util.ArrayList;
 import alice.AGame;
 import alice.position.APosition;
+import alice.production.AOrder;
 import alice.production.orders.AZergBuildOrder;
 import alice.repair.ARepairManager;
 import bwapi.Order;
@@ -101,8 +102,12 @@ public class AUnit implements AUnitOrders {
 			return false;
 	}
 	
+	public boolean isMorphing() {
+		return this.unit.isMorphing();
+	}
+	
 	public boolean cancelConstruction() {
-		AZergBuildOrder.finishOrder(this.getType(), this);
+		AZergBuildOrder.setOrderStatus(this.getType(), this, AOrder.STATUS_FINISHED); //Anpassen, damit die neu Gebaut werden
 		return this.unit.cancelConstruction();
 	}
 	

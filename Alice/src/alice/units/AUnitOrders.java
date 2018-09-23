@@ -23,35 +23,36 @@ public interface AUnitOrders {
 		return u().buildAddon(addon.getUnitType());
 	}
 
-	default void morph(AUnitType ut) {
-		this.u().morph(ut.getUnitType());
-		this.unit().setUnitOrder(AUnitOrder._MORPHING);
+	default boolean morph(AUnitType ut) {
+		if (this.u().morph(ut.getUnitType())) {
+			this.unit().setUnitOrder(AUnitOrder._MORPHING);
+			return true;
+		}
+		return false;
 	}
 
-	default void build(AUnitType unitType, APosition position,  AOrder order) {
+	default void build(AUnitType unitType, APosition position, AOrder order) {
 		this.u().build(unitType.getUnitType(), position.toBuildTilePosition(unitType));
 		this.unit().setUnitOrder(AUnitOrder._BUILDING);
-		order.setStatus(AOrder.STATUS_IN_PROCESS);
+		order.setStatus(AOrder.STAUS_IN_ORDER);
 	}
-	
-	
 
 	default void train(AUnitType unitType) {
 		this.u().train(unitType.getUnitType());
 		this.unit().setUnitOrder(AUnitOrder._TRAIN);
 	}
 
-	default void gather(AUnit target) {
-		this.u().gather(target.u());
+	default boolean gather(AUnit target) {
+		if(this.u().gather(target.u())) {
 		target.setGatherer(this.unit());
 
 		if (Select.ourMineralFields().containsKey(target.getID()))
 			this.unit().setUnitOrder(AUnitOrder._MINING_MINERALS);
 		else
 			this.unit().setUnitOrder(AUnitOrder._GATHERING_GAS);
-
+		return true;
+		}
+		return false;
 	}
-	
-
 
 }

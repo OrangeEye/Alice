@@ -95,14 +95,19 @@ public class AZergBuildOrder {
 	/**
 	 * Setzt den Status einer Order auf finish
 	 */
-	public static void finishOrder(AUnitType finished, AUnit builder) {
+	public static void setOrderStatus(AUnitType finished, AUnit builder, String orderStatus) {
 
 		for (AOrder order : Zerg_3_Hatch_Opener.buildOrderList) {
-				if ( order.getAUnitType().equals(finished) && ( builder.equals(order.getBuilder())|| order.getBuilder() == null)) { //beim Extractor verschwindet der builder
-					order.setStatus(AOrder.STATUS_FINISHED);
-					return;
-				}
+			if (order.getAUnitType().equals(finished)
+					&& (builder.equals(order.getBuilder()) || (order.getBuilder() == null && order.getAUnitType().equals(AUnitType.Zerg_Extractor)))) { // beim Extractor
+																								// verschwindet der
+																								// builder
+				order.setStatus(orderStatus);
+				return;
+			}
 		}
 	}
+	
+
 
 }

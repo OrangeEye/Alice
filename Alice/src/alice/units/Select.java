@@ -339,8 +339,8 @@ public class Select {
 		}
 
 		if (notExisting != null) {
-			if (Select.ourUnits().containsKey(notExisting.getID()))
-				AGame.decreaseSupplyUsedOrTotal(notExisting.getType());
+		//	if (Select.ourUnits().containsKey(notExisting.getID()))
+	//			AGame.decreaseSupplyUsedOrTotal(notExisting.getType());
 			Select.clearLists(notExisting.getID());
 
 		}

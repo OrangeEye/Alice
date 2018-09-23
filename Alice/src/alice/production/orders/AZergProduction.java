@@ -24,6 +24,8 @@ public class AZergProduction {
 	private static boolean extractorTrick = true;
 
 	public static void update() {
+		updateReservedRessources();
+
 		AOrder nextOrder = AZergBuildOrder.getNextOrder();
 		if (nextOrder == null) {
 			System.out.println("Kein nächste Bau Order");
@@ -32,7 +34,7 @@ public class AZergProduction {
 
 		if (nextOrder.isUnitType())
 			buildNextUnit(nextOrder);
-		
+
 		cancelBuilding();
 	}
 
@@ -55,13 +57,13 @@ public class AZergProduction {
 		}
 
 	}
-	
+
 	private static void cancelBuilding() {
-		AUnit toCancel=null;
-		if(extractorTrick && AGame.getSupplyUsed() ==18) 
+		AUnit toCancel = null;
+		if (extractorTrick && AGame.getSupplyUsed() == 18 && Select.getOurLarvas().size() ==0)
 			toCancel = Select.getUnit(AUnitType.Zerg_Extractor);
-		
-		if(toCancel != null)
+
+		if (toCancel != null)
 			extractorTrick = !toCancel.cancelConstruction();
 	}
 
@@ -77,7 +79,7 @@ public class AZergProduction {
 				|| AGame.getSupplyFree() < ut.supplyRequired()) {
 
 			return true;
-			
+
 		}
 
 		return false;
@@ -87,11 +89,11 @@ public class AZergProduction {
 		AUnit larva = Select.first(Select.getOurLarvas());
 		if (larva != null) {
 			order.setBuilder(larva);
-			larva.morph(nextUnitType);
-			Select.getOurLarvas().remove(larva.getID());
 
-			order.setStatus(AOrder.STATUS_IN_PROCESS);
-			addSupply(nextUnitType);
+			// Select.getOurLarvas().remove(larva.getID()); TODO: überprüfen
+			// increaseReservedRessources(nextUnitType);
+			if (larva.morph(nextUnitType))
+				order.setStatus(AOrder.STAUS_IN_ORDER);
 		}
 	}
 
@@ -115,14 +117,17 @@ public class AZergProduction {
 		buildExtractor(gasFieldMain, order);
 	}
 
-	private static void addSupply(AUnitType ut) {
-		AGame.increaseSupplyUsed(ut.supplyRequired());
-	}
+	/*
+	 * private static void addSupply(AUnitType ut) {
+	 * AGame.increaseSupplyUsed(ut.supplyRequired()); }
+	 */
 
 	private static void buildExtractor(AUnit gasField, AOrder order) {
 		AUnit worker = Select.clostestOrInRadius(Select.ourWorkersFreeToBuildOrRepair(), gasField.getPosition(), 250);
-		if (worker != null)
+		if (worker != null) {
 			worker.build(AUnitType.Zerg_Extractor, gasField.getPosition(), order);
+			// increaseReservedRessources(AUnitType.Zerg_Extractor);
+		}
 	}
 
 	public static LinkedList<AOrder> getBuildOrderList() {
@@ -136,7 +141,25 @@ public class AZergProduction {
 	public static int getGasReserved() {
 		return gasReserved;
 	}
-	
-	
+
+	/*
+	 * public static void increaseReservedRessources(AUnitType ut) { mineralReserved
+	 * += ut.mineralPrice(); gasReserved += ut.gasPrice(); }
+	 * 
+	 * public static void decreaseReservedRessources(AUnitType ut) { mineralReserved
+	 * -= ut.mineralPrice(); gasReserved -= ut.gasPrice(); }
+	 */
+
+	public static void updateReservedRessources() {
+		mineralReserved = 0;
+		gasReserved = 0;
+		for (AOrder order : getBuildOrderList()) {
+			if (order.getStatus().equals(AOrder.STAUS_IN_ORDER)) {
+				mineralReserved += order.getAUnitType().mineralPrice();
+				gasReserved += order.getAUnitType().gasPrice();
+
+			}
+		}
+	}
 
 }

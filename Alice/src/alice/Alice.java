@@ -138,20 +138,22 @@ public class Alice implements BWEventListener {
 	}
 
 	public void onUnitComplete(Unit arg0) { 
-		System.out.println("onComplete: " + arg0.getType());
+		System.out.println("onComplete: " + arg0.getType()  + " ID:" + arg0.getID());
 		
 		AUnit newUnit = new AUnit(arg0);
 		Select.addNewUnit(newUnit);
 		
+		AGame.handleOnUnitMorphOrComplete(newUnit);
 		
+		//Für Overlords, die supply generieren
+	//	if (newUnit.supplyProvided() > 0)
+	//		AGame.increaseSupplyTotal(newUnit.supplyProvided());
 		
-		if (newUnit.supplyProvided() > 0)
-			AGame.increaseSupplyTotal(newUnit.supplyProvided());
-		
+		/*
 		AUnit morphedUnit = new AUnit(arg0);
 		AUnitType ut = AUnitType.getAUnitType(arg0.getType());
 		AZergBuildOrder.finishOrder(ut, morphedUnit);
-		
+		*/
 
 	}
 
@@ -183,13 +185,11 @@ public class Alice implements BWEventListener {
 
 	public void onUnitMorph(Unit arg0) {
 		System.out.println("onMorph: " + arg0.getType()  + " ID:" + arg0.getID());
-		AUnit morphedUnit = new AUnit(arg0);
-		AUnitType ut = AUnitType.getAUnitType(arg0.getType());
-		AZergBuildOrder.finishOrder(ut, morphedUnit);
 		
-		if(morphedUnit.isType(AUnitType.Resource_Vespene_Geyser)) {
-			Select.removeVespeneGeyser(morphedUnit.getPosition());
-		}
+		AUnit newUnit = new AUnit(arg0);
+		Select.addNewUnit(newUnit);
+		
+		AGame.handleOnUnitMorphOrComplete(newUnit);
 	}
 
 	public void onUnitRenegade(Unit arg0) {

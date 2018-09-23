@@ -9,6 +9,7 @@ import alice.units.AUnitType;
 public class AOrder {
 	
 	public static String STATUS_FINISHED = "finished";
+	public static String STAUS_IN_ORDER = "in_order";
 	public static String STATUS_IN_PROCESS = "in_process";
 	public static String STATUS_NOT_STARTED = "not_started";
 	
