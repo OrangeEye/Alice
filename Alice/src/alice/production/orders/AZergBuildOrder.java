@@ -48,7 +48,7 @@ public class AZergBuildOrder {
 		buildOrder.peekLast().setMineralDelay(10);
 		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
 		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
-		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
+		buildOrder.add(new AOrder(AUnitType.Zerg_Drone)); 
 		buildOrder.add(new AOrder(AUnitType.Zerg_Hatchery)); // 12 supply
 		buildOrder.peekLast().setAdditionalInfo(AOrder.INFO_IS_EXPANSION); //setzt die Hatch als Expansion an
 		buildOrder.peekLast().setMineralDelay(-100);
