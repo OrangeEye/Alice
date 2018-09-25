@@ -4,6 +4,7 @@ import java.util.*;
 
 import alice.AGame;
 import alice.AliceConfig;
+import alice.position.AMap;
 import alice.position.APosition;
 import alice.scout.AScoutManager;
 import alice.units.AUnit;
@@ -281,6 +282,20 @@ public class Select {
 
 	public static HashMap<Integer, AUnit> getOurOverlords() {
 		return ourOverlords;
+	}
+	
+	public static APosition nextVespeneGeyserPosition() {
+		// sucht das nächste Vespene Geyser
+		AUnit closestGasField = null;
+		double gasFieldDistance = Double.MAX_VALUE;
+		for (AUnit gasField : Select.getGasFields().values()) {
+			if (closestGasField == null
+					|| AMap.getMainBasePosition().getDistance(gasField.getPosition()) < gasFieldDistance) {
+				closestGasField = gasField;
+				gasFieldDistance = AMap.getMainBasePosition().getDistance(gasField.getPosition());
+			}
+		}
+		return closestGasField.getPosition();
 	}
 
 	/**

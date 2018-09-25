@@ -45,6 +45,7 @@ public class AZergBuildOrder {
 		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
 		buildOrder.add(new AOrder(AUnitType.Zerg_Overlord)); // 9 supply
 		buildOrder.add(new AOrder(AUnitType.Zerg_Extractor));
+		buildOrder.peekLast().setAdditionalInfo(AOrder.INFO_EXTRACTOR_TRICK);
 		buildOrder.peekLast().setMineralDelay(10);
 		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));
 		buildOrder.add(new AOrder(AUnitType.Zerg_Drone));

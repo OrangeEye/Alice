@@ -15,6 +15,7 @@ public class AOrder {
 
 	public static String INFO_NOTHING = "nothing";
 	public static String INFO_IS_EXPANSION = "expansion";
+	public static String INFO_EXTRACTOR_TRICK ="extractor trick";
 
 	private String status = STATUS_NOT_STARTED; // Welcher Status die Order in der Bauschleife hat
 	private String additionalInfo = INFO_NOTHING; // Zusatzinformationen zu der Order

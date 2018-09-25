@@ -53,12 +53,7 @@ public class AZergProduction {
 		}
 
 		if (nextUnitType.isBuilding()) {
-			if (nextUnitType.isSpecialBuilding())
-				buildSpecialBuilding(nextUnitType, order);
-			if (order.hasAdditionalInfo())
-				handleAdditionalInfo(order, order.getAdditionalInfo());
-			else
-				handleNormalBuilding(order);
+			buildBuilding(order);
 		}
 
 	}
@@ -72,35 +67,40 @@ public class AZergProduction {
 			extractorTrick = !toCancel.cancelConstruction();
 	}
 
-	private static void handleAdditionalInfo(AOrder order, String info) {
-		if (info.equals(AOrder.INFO_IS_EXPANSION)) {
-			APosition expandPosition = AMap.getNextExpandPosition();
-			if(expandPosition != null)
-				order.setBuildPosition(expandPosition);
-		}
+	private static void buildBuilding(AOrder order) {
+		if (order.getAdditionalInfo().equals(AOrder.INFO_IS_EXPANSION))
+			expand(order);
+		else if (order.getAdditionalInfo().equals(AOrder.INFO_EXTRACTOR_TRICK))
+			buildExtractor(order);
+		else
+			buildInMainBase(order);
+
+	}
+
+	private static void buildInMainBase(AOrder order) {
+		order.setBuildPosition(AMap.getBuildPositionCloseTo(order.getAUnitType(), AMap.getMainBasePosition()));
+		if (order.getBuilder() == null)
+			order.setBuilder(
+					Select.clostestOrInRadius(Select.ourWorkersFreeToBuildOrRepair(), order.getBuildPosition(), 250));
+
+		construct(order);
 
 	}
 
 	private static void construct(AOrder order) {
-		AUnit worker = order.getBuilder();
-		APosition buildPosition = AMap.getBuildPositionCloseTo(order.getAUnitType(), position);
-		if (buildPosition != null)
-			order.setBuildPosition(buildPosition);
-		if (worker!=null) 
-			order.setBuilder(worker);
+		if (order.getBuilder() != null && order.getBuildPosition() != null)
+			order.getBuilder().build(order.getAUnitType(), order.getBuildPosition(), order);
 	}
 
-	private static void expand(AOrder order, APosition position) {
-		AUnit worker = order.getBuilder();
-		order.setBuildPosition();
+	private static void expand(AOrder order) {
+		order.setBuildPosition(AMap.getNextExpandPosition());
 
 		// Wenn die Order keinen Builder mehr hat, wird ein neuer zugewiesen
-		if (worker == null)
-			worker = Select.clostestOrInRadius(Select.ourWorkersFreeToBuildOrRepair(), order.getBuildPosition(), 250);
+		if (order.getBuilder() == null)
+			order.setBuilder(
+					Select.clostestOrInRadius(Select.ourWorkersFreeToBuildOrRepair(), order.getBuildPosition(), 250));
 
-		if (worker != null)
-			worker.build(AUnitType.Zerg_Hatchery, order.getBuildPosition(), order);
-
+		construct(order);
 	}
 
 	/**
@@ -130,31 +130,14 @@ public class AZergProduction {
 		}
 	}
 
-	private static void buildSpecialBuilding(AUnitType nextUnitType, AOrder order) {
-		if (nextUnitType.isGasBuilding()) {
-			if (extractorTrick)
-				extractorTrick(order);
-		}
-	}
+	private static void buildExtractor(AOrder order) {
+		order.setBuildPosition(Select.nextVespeneGeyserPosition());
+		if (order.getBuildPosition() == null)
+			return;
+		order.setBuilder(
+				Select.clostestOrInRadius(Select.ourWorkersFreeToBuildOrRepair(), order.getBuildPosition(), 250));
 
-	private static void extractorTrick(AOrder order) {
-		AUnit gasFieldMain = null;
-		double gasFieldDistance = Double.MAX_VALUE;
-		for (AUnit gasField : Select.getGasFields().values()) {
-			if (gasFieldMain == null
-					|| AMap.getMainBasePosition().getDistance(gasField.getPosition()) < gasFieldDistance) {
-				gasFieldMain = gasField;
-				gasFieldDistance = AMap.getMainBasePosition().getDistance(gasField.getPosition());
-			}
-		}
-		buildExtractor(gasFieldMain, order);
-	}
-
-	private static void buildExtractor(AUnit gasField, AOrder order) {
-		AUnit worker = Select.clostestOrInRadius(Select.ourWorkersFreeToBuildOrRepair(), gasField.getPosition(), 250);
-		if (worker != null) {
-			worker.build(AUnitType.Zerg_Extractor, gasField.getPosition(), order);
-		}
+		construct(order);
 	}
 
 	public static LinkedList<AOrder> getBuildOrderList() {
