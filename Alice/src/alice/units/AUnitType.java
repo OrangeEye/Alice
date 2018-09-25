@@ -95,6 +95,14 @@ public class AUnitType {
 		else
 			return null;
 	}
+	
+	public int getTileWidth() {
+		return this.unitType.tileWidth();
+	}
+	
+	public int getTileHeight() {
+		return this.unitType.tileHeight();
+	}
 
 	public int supplyProvided() {
 		return this.getUnitType().supplyProvided();

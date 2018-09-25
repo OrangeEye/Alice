@@ -44,7 +44,7 @@ public class AZergProduction {
 	 */
 	private static void buildNextUnit(AOrder order) {
 		AUnitType nextUnitType = order.getAUnitType();
-		if (notEnoughRessourcesAndSupply(nextUnitType,order))
+		if (notEnoughRessourcesAndSupply(nextUnitType, order))
 			return;
 
 		AUnitType builder = order.getWhatBuildsIt();
@@ -57,6 +57,8 @@ public class AZergProduction {
 				buildSpecialBuilding(nextUnitType, order);
 			if (order.hasAdditionalInfo())
 				handleAdditionalInfo(order, order.getAdditionalInfo());
+			else
+				handleNormalBuilding(order);
 		}
 
 	}
@@ -72,14 +74,25 @@ public class AZergProduction {
 
 	private static void handleAdditionalInfo(AOrder order, String info) {
 		if (info.equals(AOrder.INFO_IS_EXPANSION)) {
-			expand(order);
+			APosition expandPosition = AMap.getNextExpandPosition();
+			if(expandPosition != null)
+				order.setBuildPosition(expandPosition);
 		}
 
 	}
 
-	private static void expand(AOrder order) {
+	private static void construct(AOrder order) {
 		AUnit worker = order.getBuilder();
-		order.setBuildPosition(AMap.getNextExpandPosition());
+		APosition buildPosition = AMap.getBuildPositionCloseTo(order.getAUnitType(), position);
+		if (buildPosition != null)
+			order.setBuildPosition(buildPosition);
+		if (worker!=null) 
+			order.setBuilder(worker);
+	}
+
+	private static void expand(AOrder order, APosition position) {
+		AUnit worker = order.getBuilder();
+		order.setBuildPosition();
 
 		// Wenn die Order keinen Builder mehr hat, wird ein neuer zugewiesen
 		if (worker == null)
@@ -98,7 +111,8 @@ public class AZergProduction {
 	 * @return
 	 */
 	private static boolean notEnoughRessourcesAndSupply(AUnitType ut, AOrder order) {
-		if (AGame.getGas() < ut.gasPrice() + gasReserved || AGame.getMinerals() < ut.mineralPrice() + mineralReserved + order.getMineralDelay()
+		if (AGame.getGas() < ut.gasPrice() + gasReserved
+				|| AGame.getMinerals() < ut.mineralPrice() + mineralReserved + order.getMineralDelay()
 				|| AGame.getSupplyFree() < ut.supplyRequired())
 
 			return true;

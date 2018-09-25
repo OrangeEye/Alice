@@ -83,7 +83,7 @@ public class APainter {
 	//	game.drawTextMap(AMap.getMainBasePosition().getPosition(), "Main_Base");
 		int i = 2;
 		for (APosition base : AMap.getBasePositions()) {
-			game.drawTextMap(base.getPosition(), i + "");
+			game.drawTextMap(base.getPosition(), i + " " + base.getAddInfo());
 			i++;
 		}
 	}

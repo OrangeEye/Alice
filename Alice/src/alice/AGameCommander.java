@@ -3,6 +3,7 @@ package alice;
 import alice.buildings.managers.AProductionCommander;
 import alice.buildings.managers.AWorkerCommander;
 import alice.information.APainter;
+import alice.position.AMap;
 import alice.units.Select;
 import alice.util.CodeProfiler;
 
@@ -19,6 +20,7 @@ public class AGameCommander {
 		
 		CodeProfiler.endMeasuring(CodeProfiler.ASPECT_PAINTING);
 		
+		AMap.update();
 		
 		CodeProfiler.startMeasuring(CodeProfiler.ASPECT_PRODUCTION);
 		

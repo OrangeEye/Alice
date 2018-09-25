@@ -29,6 +29,11 @@ public class Select {
 	private static HashMap<Integer, AUnit> ourBuildings = new HashMap<Integer, AUnit>();
 	private static HashMap<Integer, AUnit> ourLarvas = new HashMap<Integer, AUnit>();
 	private static HashMap<Integer, AUnit> ourOverlords = new HashMap<Integer, AUnit>();
+	
+	private static HashMap<Integer, AUnit> enemyUnits = new HashMap<Integer, AUnit>();
+	private static HashMap<Integer, AUnit> enemyWorkers = new HashMap<Integer, AUnit>();
+	private static HashMap<Integer, AUnit> enemyDestroyedUnits = new HashMap<Integer, AUnit>();
+	private static HashMap<Integer, AUnit> enemyBuildings = new HashMap<Integer, AUnit>();
 
 	private HashMap<Integer, AUnit> listSelectedAUnits = new HashMap<Integer, AUnit>();
 
@@ -135,7 +140,18 @@ public class Select {
 			if (newUnit.isType(AUnitType.Zerg_Overlord))
 				ourOverlords.put(newUnit.getID(), newUnit);
 		}
+		
+		//Wenn es eine feindliche Einheit ist
+		if(newUnit.getPlayer().equals(AGame.getPlayerEnemy())) {
+			enemyUnits.put(newUnit.getID(), newUnit);
+			
+			if (newUnit.isType(AliceConfig.WORKER))
+				enemyWorkers.put(newUnit.getID(), newUnit);
+			if (newUnit.isBuilding())
+				enemyBuildings.put(newUnit.getID(), newUnit);
+		}
 
+		//Wenn es eine neutrale Einheit ist
 		if (newUnit.getPlayer().equals(AGame.getPlayerNeutral())) {
 			neutralUnits.put(newUnit.getID(), newUnit);
 			if (newUnit.isType(AUnitType.Resource_Mineral_Field, AUnitType.Resource_Mineral_Field_Type_2,
@@ -148,15 +164,22 @@ public class Select {
 
 	public static void clearLists(Integer ID) {
 		allUnits.remove(ID);
+		
 		neutralUnits.remove(ID);
 		mineralFields.remove(ID);
 		gasFields.remove(ID);
+		
 		ourUnits.remove(ID);
 		ourWorkers.remove(ID);
 		ourDestroyedUnits.remove(ID);
 		ourBuildings.remove(ID);
 		ourLarvas.remove(ID);
 		ourOverlords.remove(ID);
+		
+		enemyUnits.remove(ID);
+		enemyWorkers.remove(ID);
+		enemyDestroyedUnits.remove(ID);
+		enemyBuildings.remove(ID);
 	}
 
 	public static void removeVespeneGeyser(APosition position) {
@@ -278,14 +301,24 @@ public class Select {
 		}
 		return ourMineralFields;
 
-		/*
-		 * Select mineralFields = mineralFields(); Iterator<AUnit> unitsIterator =
-		 * mineralFields.listSelectedAUnits.iterator(); while (unitsIterator.hasNext())
-		 * { AUnit mineralField = unitsIterator.next(); boolean isOurMineralField =
-		 * false; for (AUnit base : ourBases().listSelectedAUnits) { if
-		 * (mineralField.isInRangeTo(base, 12)) { isOurMineralField = true; break; } }
-		 * if (!isOurMineralField) unitsIterator.remove(); } return mineralFields;
-		 */
+	}
+	
+	
+
+	public static HashMap<Integer, AUnit> getEnemyUnits() {
+		return enemyUnits;
+	}
+
+	public static HashMap<Integer, AUnit> getEnemyWorkers() {
+		return enemyWorkers;
+	}
+
+	public static HashMap<Integer, AUnit> getEnemyDestroyedUnits() {
+		return enemyDestroyedUnits;
+	}
+
+	public static HashMap<Integer, AUnit> getEnemyBuildings() {
+		return enemyBuildings;
 	}
 
 	/**
