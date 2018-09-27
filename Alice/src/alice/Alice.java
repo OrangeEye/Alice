@@ -19,7 +19,7 @@ public class Alice implements BWEventListener {
 
 	private boolean isStarted = false;
 	private boolean isPaused = false;
-	//ArrayList<Long> list = new ArrayList<Long>();
+	// ArrayList<Long> list = new ArrayList<Long>();
 	private static Alice instance;
 	private Game bwapi;
 	private AGameCommander gameCommander;
@@ -101,109 +101,140 @@ public class Alice implements BWEventListener {
 	 */
 	public void onStart() {
 		try {
-		// Initialize bwapi object - BWMirror wrapper of C++ BWAPI.
-		bwapi = mirror.getGame();
+			// Initialize bwapi object - BWMirror wrapper of C++ BWAPI.
+			bwapi = mirror.getGame();
 
-		// Initialize Game Commander, eine Klasse die das Spiel steuert
-		gameCommander = new AGameCommander();
+			// Initialize Game Commander, eine Klasse die das Spiel steuert
+			gameCommander = new AGameCommander();
 
-		Race racePlayed = bwapi.self().getRace(); // AGame.getPlayerUs().getRace();
-		if (racePlayed.equals(Race.Terran)) {
-			AliceConfig.useConfigForTerran();
-		} else if (racePlayed.equals(Race.Zerg)) {
-			AliceConfig.useConfigForZerg();
+			Race racePlayed = bwapi.self().getRace(); // AGame.getPlayerUs().getRace();
+			if (racePlayed.equals(Race.Terran)) {
+				AliceConfig.useConfigForTerran();
+			} else if (racePlayed.equals(Race.Zerg)) {
+				AliceConfig.useConfigForZerg();
+			}
+
+			System.out.print("Analyzing map... ");
+			BWTA.readMap();
+			BWTA.analyze();
+			System.out.println("Map data ready.");
+			// getBwapi().sendText("black sheep wall");
+
+			// === Set some BWAPI params ===============================
+			AMap.inititalize();
+			bwapi.setLocalSpeed(AliceConfig.GAME_SPEED); // Change in-game speed (0 - fastest, 20 - normal)
+			// bwapi.setFrameSkip(2); // Number of GUI frames to skip
+			// bwapi.setGUI(false); // Turn off GUI - will speed up game considerably
+			bwapi.enableFlag(1); // Enable user input - without it you can't control units with mouse
+
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		
-
-
-		System.out.print("Analyzing map... ");
-		BWTA.readMap();
-		BWTA.analyze();
-		System.out.println("Map data ready.");
-		//getBwapi().sendText("black sheep wall");
-		
-
-		// === Set some BWAPI params ===============================
-		AMap.inititalize();
-		bwapi.setLocalSpeed(AliceConfig.GAME_SPEED); // Change in-game speed (0 - fastest, 20 - normal)
-		// bwapi.setFrameSkip(2); // Number of GUI frames to skip
-		// bwapi.setGUI(false); // Turn off GUI - will speed up game considerably
-		bwapi.enableFlag(1); // Enable user input - without it you can't control units with mouse
-		
-		
-		
-	} catch (Exception e) {
-		e.printStackTrace();
-	}
 	}
 
-	public void onUnitComplete(Unit arg0) { 
-		System.out.println("onComplete: " + arg0.getType()  + " ID:" + arg0.getID());
-		
-		AUnit newUnit = new AUnit(arg0);
-		Select.addNewUnit(newUnit);
-		
-		AGame.handleOnUnitMorphOrComplete(newUnit);
-		
-		//Für Overlords, die supply generieren
-	//	if (newUnit.supplyProvided() > 0)
-	//		AGame.increaseSupplyTotal(newUnit.supplyProvided());
-		
-		/*
-		AUnit morphedUnit = new AUnit(arg0);
-		AUnitType ut = AUnitType.getAUnitType(arg0.getType());
-		AZergBuildOrder.finishOrder(ut, morphedUnit);
-		*/
+	public void onUnitComplete(Unit arg0) {
+		try {
+			System.out.println("onComplete: " + arg0.getType() + " ID:" + arg0.getID());
+
+			AUnit newUnit = new AUnit(arg0);
+			Select.addNewUnit(newUnit);
+
+			AGame.handleOnUnitMorphOrComplete(newUnit);
+
+			// Für Overlords, die supply generieren
+			// if (newUnit.supplyProvided() > 0)
+			// AGame.increaseSupplyTotal(newUnit.supplyProvided());
+
+			/*
+			 * AUnit morphedUnit = new AUnit(arg0); AUnitType ut =
+			 * AUnitType.getAUnitType(arg0.getType()); AZergBuildOrder.finishOrder(ut,
+			 * morphedUnit);
+			 */
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 
 	public void onUnitCreate(Unit arg0) {
-		Select.addNewUnit(new AUnit(arg0));
-		System.out.println("onCreate: " + arg0.getType() + " ID:" + arg0.getID());
+		try {
+			Select.addNewUnit(new AUnit(arg0));
+			System.out.println("onCreate: " + arg0.getType() + " ID:" + arg0.getID());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void onUnitDestroy(Unit arg0) {
-		Select.addNewUnit(new AUnit(arg0));
-		System.out.println("onDestroyed: " + arg0.getType() + " ID:" + arg0.getID());
-		
-		AUnit destroyedUnit = new AUnit(arg0);
-		AGame.handleOnDestroyed(destroyedUnit);
+		try {
+			Select.addNewUnit(new AUnit(arg0));
+			System.out.println("onDestroyed: " + arg0.getType() + " ID:" + arg0.getID());
+
+			AUnit destroyedUnit = new AUnit(arg0);
+			AGame.handleOnDestroyed(destroyedUnit);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 
 	public void onUnitDiscover(Unit arg0) {
-		Select.addNewUnit(new AUnit(arg0));
-		System.out.println("onDiscovered: " + arg0.getType() + " ID:" + arg0.getID());
+		try {
+			Select.addNewUnit(new AUnit(arg0));
+			System.out.println("onDiscovered: " + arg0.getType() + " ID:" + arg0.getID());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void onUnitEvade(Unit arg0) {
-		System.out.println("onUnitEvade: " + arg0.getType() + " ID:" + arg0.getID());
+		try {
+			System.out.println("onUnitEvade: " + arg0.getType() + " ID:" + arg0.getID());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 
 	public void onUnitHide(Unit arg0) {
-		System.out.println("onUnitHide: " + arg0.getType() + " ID:" + arg0.getID());
+		try {
+			System.out.println("onUnitHide: " + arg0.getType() + " ID:" + arg0.getID());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 
 	public void onUnitMorph(Unit arg0) {
-		System.out.println("onMorph: " + arg0.getType()  + " ID:" + arg0.getID());
-		
-		AUnit newUnit = new AUnit(arg0);
-		Select.addNewUnit(newUnit);
-		
-		AGame.handleOnUnitMorphOrComplete(newUnit);
+		try {
+			System.out.println("onMorph: " + arg0.getType() + " ID:" + arg0.getID());
+
+			AUnit newUnit = new AUnit(arg0);
+			Select.addNewUnit(newUnit);
+
+			AGame.handleOnUnitMorphOrComplete(newUnit);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void onUnitRenegade(Unit arg0) {
-		AUnit newUnit = new AUnit(arg0);
-		Select.addNewUnit(newUnit);
-		System.out.println("onUnitRenegade: " + arg0.getType() + " ID:" + arg0.getID());
+		try {
+			AUnit newUnit = new AUnit(arg0);
+			Select.addNewUnit(newUnit);
+			System.out.println("onUnitRenegade: " + arg0.getType() + " ID:" + arg0.getID());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 
 	public void onUnitShow(Unit arg0) {
-		System.out.println("onUnitShow: " + arg0.getType() + " ID:" + arg0.getID());
+		try {
+			System.out.println("onUnitShow: " + arg0.getType() + " ID:" + arg0.getID());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 

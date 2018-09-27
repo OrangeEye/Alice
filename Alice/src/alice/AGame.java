@@ -10,6 +10,7 @@ import bwapi.Game;
 import bwapi.Player;
 import bwapi.Race;
 import bwapi.Unit;
+import bwapi.Error;
 
 /**
  * Repräsentiert verschiedene Aspekte aus dem Spiel wie Spielzeit, Supply,
@@ -30,9 +31,27 @@ public class AGame {
 	public static double getSupplyTotal() {
 		return supplyTotal;
 	}
+	
+	public static Error getLastError() {
+		return Alice.getBwapi().getLastError();
+	}
 
 	public static int getFPS() {
 		return Alice.getBwapi().getFPS();
+	}
+	
+	public static boolean setLastError(Error error) {
+		return Alice.getBwapi().setLastError(error);
+	}
+	
+	/**
+	 * Gibt true zürck, wenn der letzte Befehl über die bwapi keine Fehlermeldung gab.
+	 * @return
+	 */
+	public static boolean lastOrdersuccess() {
+		boolean success = getLastError().equals(Error.None);
+		setLastError(Error.None);
+		return success;
 	}
 	
 	public static int getFrameCount() {

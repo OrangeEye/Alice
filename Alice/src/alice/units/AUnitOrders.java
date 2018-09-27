@@ -1,5 +1,6 @@
 package alice.units;
 
+import alice.AGame;
 import alice.position.APosition;
 import alice.production.AOrder;
 import bwapi.TilePosition;
@@ -32,11 +33,11 @@ public interface AUnitOrders {
 	}
 
 	default void build(AUnitType unitType, APosition position, AOrder order) {
-		order.setBuilder(this.unit());
-		if (this.u().build(unitType.getUnitType(), position.toBuildTilePosition(unitType))) {
+
+		if (this.u().build(unitType.getUnitType(), position.toBuildTilePosition(unitType)) && AGame.lastOrdersuccess()) {
 			this.unit().setUnitOrder(AUnitOrder._BUILDING);
 			order.setStatus(AOrder.STAUS_IN_ORDER);
-		} else if (this.u().move(position.getPosition())) {
+		} else if (this.u().move(position.getPosition()) && AGame.lastOrdersuccess()) {
 			this.unit().setUnitOrder(AUnitOrder._MOVE_TO_BUILD);
 		}
 	}
@@ -47,7 +48,7 @@ public interface AUnitOrders {
 	}
 
 	default boolean gather(AUnit target) {
-		if (this.u().gather(target.u())) {
+		if (this.u().gather(target.u()) && AGame.lastOrdersuccess()) {
 			target.setGatherer(this.unit());
 
 			if (Select.ourMineralFields().containsKey(target.getID()))

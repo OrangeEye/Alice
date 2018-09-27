@@ -6,6 +6,7 @@ import alice.information.APainter;
 import alice.position.AMap;
 import alice.units.Select;
 import alice.util.CodeProfiler;
+import bwapi.Error;
 
 public class AGameCommander {
 	
@@ -38,6 +39,8 @@ public class AGameCommander {
 		CodeProfiler.endMeasuring(CodeProfiler.ASPECT_Global);
 		
 		Select.removeNotExistingUnits();
+		Error lastError = AGame.getLastError();
+		if(lastError != null && !lastError.equals(Error.None)) System.out.println(lastError);
 	}
 
 }
