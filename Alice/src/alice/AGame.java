@@ -44,15 +44,7 @@ public class AGame {
 		return Alice.getBwapi().setLastError(error);
 	}
 	
-	/**
-	 * Gibt true zürck, wenn der letzte Befehl über die bwapi keine Fehlermeldung gab.
-	 * @return
-	 */
-	public static boolean lastOrdersuccess() {
-		boolean success = getLastError().equals(Error.None);
-		setLastError(Error.None);
-		return success;
-	}
+
 	
 	public static int getFrameCount() {
 		return Alice.getBwapi().getFrameCount();

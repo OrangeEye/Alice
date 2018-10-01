@@ -34,10 +34,11 @@ public interface AUnitOrders {
 
 	default void build(AUnitType unitType, APosition position, AOrder order) {
 
-		if (this.u().build(unitType.getUnitType(), position.toBuildTilePosition(unitType)) && AGame.lastOrdersuccess()) {
+		if (this.u().build(unitType.getUnitType(), position.toBuildTilePosition(unitType))) {
 			this.unit().setUnitOrder(AUnitOrder._BUILDING);
-			order.setStatus(AOrder.STAUS_IN_ORDER);
-		} else if (this.u().move(position.getPosition()) && AGame.lastOrdersuccess()) {
+			if (this.unit().isConstructing())
+				order.setStatus(AOrder.STAUS_IN_ORDER);
+		} else if (this.u().move(position.getPosition())) {
 			this.unit().setUnitOrder(AUnitOrder._MOVE_TO_BUILD);
 		}
 	}
@@ -48,7 +49,7 @@ public interface AUnitOrders {
 	}
 
 	default boolean gather(AUnit target) {
-		if (this.u().gather(target.u()) && AGame.lastOrdersuccess()) {
+		if (this.u().gather(target.u())) {
 			target.setGatherer(this.unit());
 
 			if (Select.ourMineralFields().containsKey(target.getID()))
