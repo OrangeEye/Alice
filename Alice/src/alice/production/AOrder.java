@@ -15,11 +15,11 @@ public class AOrder {
 
 	public static String INFO_NOTHING = "nothing";
 	public static String INFO_IS_EXPANSION = "expansion";
-	public static String INFO_EXTRACTOR_TRICK ="extractor trick";
+	public static String INFO_EXTRACTOR_TRICK = "extractor trick";
 
 	private String status = STATUS_NOT_STARTED; // Welcher Status die Order in der Bauschleife hat
 	private String additionalInfo = INFO_NOTHING; // Zusatzinformationen zu der Order
-	private int mineralDelay=0; //Um den Bau zu Verzögern / den Arbeiter schon früher zum Platz zu bewegen
+	private int mineralDelay = 0; // Um den Bau zu Verzögern / den Arbeiter schon früher zum Platz zu bewegen
 	private AUnitType unitType;
 	private APosition buildPosition;
 	private AUnit builder;
@@ -59,13 +59,17 @@ public class AOrder {
 	public APosition getBuildPosition() {
 		return buildPosition;
 	}
-	
+
 	public boolean hasAdditionalInfo() {
 		return !this.additionalInfo.equals(INFO_NOTHING);
 	}
 
-	public void setBuildPosition(APosition buildPosition) {
-		this.buildPosition = buildPosition;
+	public boolean setBuildPosition(APosition buildPosition) {
+		if (buildPosition != null) {
+			this.buildPosition = buildPosition;
+			return true;
+		}
+		return false;
 	}
 
 	public void setStatus(String status) {
@@ -75,8 +79,6 @@ public class AOrder {
 	public String getStatus() {
 		return this.status;
 	}
-	
-	
 
 	public int getMineralDelay() {
 		return mineralDelay;

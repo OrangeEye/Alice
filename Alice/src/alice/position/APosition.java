@@ -20,9 +20,6 @@ public class APosition {
 		this.position = position;
 	}
 
-	public Position getPosition() {
-		return position;
-	}
 
 	public APosition(int pixelX, int pixelY) {
 		this.position = new Position(pixelX, pixelY);
@@ -30,6 +27,24 @@ public class APosition {
 
 	public APosition(BaseLocation baseLocation) {
 		this.position = new Position(baseLocation.getX(), baseLocation.getY());
+	}
+	
+	public static APosition createFromTile(int tileX, int tileY) {
+		return new APosition(tileX * 32, tileY * 32);
+	}
+	
+	public static APosition createFromPosition(Position position) {
+		if (instances.containsKey(position)) {
+			return instances.get(position);
+		} else {
+			// APosition position = new APosition(position);
+			instances.put(position, new APosition(position));
+			return instances.get(position);
+		}
+	}
+	
+	public Position getPosition() {
+		return position;
 	}
 
 	/**
@@ -54,19 +69,8 @@ public class APosition {
 		return position.getY() / 32;
 	}
 
-	public static APosition createFromPosition(Position position) {
-		if (instances.containsKey(position)) {
-			return instances.get(position);
-		} else {
-			// APosition position = new APosition(position);
-			instances.put(position, new APosition(position));
-			return instances.get(position);
-		}
-	}
 
-	public static APosition createFromTile(int tileX, int tileY) {
-		return new APosition(tileX * 32, tileY * 32);
-	}
+
 
 	public TilePosition toBuildTilePosition(AUnitType unitType) {
 		return new TilePosition(this.getTileX() - unitType.getUnitType().tileWidth() / 2,

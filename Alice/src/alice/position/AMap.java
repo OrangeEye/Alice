@@ -10,6 +10,7 @@ import alice.graph.Node;
 import alice.units.AUnit;
 import alice.units.AUnitType;
 import alice.units.Select;
+import bwapi.TilePosition;
 import bwta.*;
 
 /**
@@ -81,23 +82,94 @@ public class AMap {
 		return null;
 	}
 
-	/**
-	 * wird vielleicht nicht gebraucht
-	 * 
-	 * @param ut
-	 * @param position
-	 * @return
-	 */
+	private static APosition getBuildPositionCloseToR(AUnitType ut, int lastUp, int lastDown, int lastLeft,
+			int lastRight, int tileX, int tileY, int count) {
+		// TilePosition tilePosition = position.toTilePosition();
+		if (canBuildHere(tileX, tileY, ut))
+			return APosition.createFromTile(tileX, tileY);
+		else if (count == 0)
+			return null;
+
+		for (int i = 0; i < lastUp + 2; i++) {
+			tileY--;
+			if (canBuildHere(tileX, tileY, ut))
+				return APosition.createFromTile(tileX, tileY);
+		}
+
+		for (int i = 0; i < lastLeft + 2; i++) {
+			tileX--;
+			if (canBuildHere(tileX, tileY, ut))
+				return APosition.createFromTile(tileX, tileY);
+		}
+
+		for (int i = 0; i < lastDown + 2; i++) {
+			tileY++;
+			if (canBuildHere(tileX, tileY, ut))
+				return APosition.createFromTile(tileX, tileY);
+		}
+
+		for (int i = 0; i < lastRight + 2; i++) {
+			tileY--;
+			if (canBuildHere(tileX, tileY, ut))
+				return APosition.createFromTile(tileX, tileY);
+		}
+
+		return getBuildPositionCloseToR(ut, lastUp + 2, lastDown + 2, lastLeft + 2, lastRight + 2, tileX, tileY,
+				--count);
+	}
 
 	public static APosition getBuildPositionCloseTo(AUnitType ut, APosition position) {
+		if (canBuildHere(position, ut))
+			return position;
+
 		int startTileX = position.getTileX();
 		int startTileY = position.getTileY();
-		int buildingTileWidth = ut.getTileWidth();
-		int buildingTileHeight = ut.getTileHeight();
+		int maxCount = 25;
 
-		return new APosition(
-				Alice.getBwapi().getBuildLocation(ut.getUnitType(), position.toTilePosition(), 8, true).toPosition());
+		return getBuildPositionCloseToR(ut, 0, 0, 0, 1, startTileX + 1, startTileY - 1, maxCount);
 
+		/*
+		 * APosition buildPosition = new APosition(
+		 * Alice.getBwapi().getBuildLocation(ut.getUnitType(),
+		 * position.toTilePosition(), 8, true).toPosition());
+		 * 
+		 * while (notPossible && maxCount != 0) { double minDistance =
+		 * Integer.MAX_VALUE; for (AUnit mineralField :
+		 * Select.ourMineralFields().values()) { double distanceMineralfield =
+		 * buildPosition.getDistance(mineralField.getPosition()); if
+		 * (distanceMineralfield < minDistance) minDistance = distanceMineralfield;
+		 * 
+		 * } if (minDistance < 200) { buildPosition = new APosition(Alice.getBwapi()
+		 * .getBuildLocation(ut.getUnitType(), position.toTilePosition(), 8,
+		 * true).toPosition()); maxCount--; } else notPossible = false; }
+		 * 
+		 * return buildPosition;
+		 */
+
+	}
+
+	public static boolean hasCreep(APosition position) {
+		return Alice.getBwapi().hasCreep(position.getTileX(), position.getTileY());
+	}
+
+	public static boolean hasCreep(int tileX, int tileY) {
+		return Alice.getBwapi().hasCreep(tileX, tileY);
+	}
+
+	public static boolean isCloseToOurMinerals(APosition position) {
+		for (AUnit mineralField : Select.ourMineralFields().values())
+			if (mineralField.getDistance(position) < 250)
+				return true;
+		return false;
+	}
+
+	public static boolean canBuildHere(APosition position, AUnitType ut) {
+		return Alice.getBwapi().canBuildHere(position.toTilePosition(), ut.getUnitType()) && hasCreep(position)
+				&& !isCloseToOurMinerals(position);
+	}
+
+	public static boolean canBuildHere(int tileX, int tileY, AUnitType ut) {
+		return canBuildHere(APosition.createFromTile(tileX, tileY), ut);
 	}
 
 	/**

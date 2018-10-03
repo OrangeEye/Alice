@@ -22,6 +22,7 @@ public class APainter {
 	public static void paint() {
 		paintBaseRadius();
 		paintCountGatherer();
+		paintOurMineralfields();
 		paintSupply();
 		paintOrders();
 		paintLarvas();
@@ -49,6 +50,12 @@ public class APainter {
 			i += 10;
 		}
 
+	}
+	
+	private static void paintOurMineralfields() {
+		for (AUnit mineralfield : Select.ourMineralFields().values()) {
+			game.drawCircleMap(mineralfield.getPosition().getPosition(), 250, Color.Cyan);
+		}
 	}
 	
 	private static void paintReservedRessources() {

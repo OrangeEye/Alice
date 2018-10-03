@@ -1,21 +1,12 @@
 package alice.production.orders;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
-
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
-
 import alice.AGame;
-import alice.Alice;
-import alice.AliceConfig;
 import alice.position.AMap;
-import alice.position.APosition;
 import alice.production.AOrder;
 import alice.units.AUnit;
 import alice.units.AUnitType;
 import alice.units.Select;
-import bwapi.Color;
 
 public class AZergProduction {
 
@@ -48,13 +39,11 @@ public class AZergProduction {
 			return;
 
 		AUnitType builder = order.getWhatBuildsIt();
-		if (builder.equals(AUnitType.Zerg_Larva)) {
+		if (builder.equals(AUnitType.Zerg_Larva))
 			morphUnit(nextUnitType, order);
-		}
 
-		if (nextUnitType.isBuilding()) {
+		if (nextUnitType.isBuilding())
 			buildBuilding(order);
-		}
 
 	}
 
@@ -68,6 +57,7 @@ public class AZergProduction {
 	}
 
 	private static void buildBuilding(AOrder order) {
+
 		if (order.getAdditionalInfo().equals(AOrder.INFO_IS_EXPANSION))
 			expand(order);
 		else if (order.getAdditionalInfo().equals(AOrder.INFO_EXTRACTOR_TRICK))
@@ -78,12 +68,13 @@ public class AZergProduction {
 	}
 
 	private static void buildInMainBase(AOrder order) {
-		order.setBuildPosition(AMap.getBuildPositionCloseTo(order.getAUnitType(), AMap.getMainBasePosition()));
-		if (order.getBuilder() == null)
-			order.setBuilder(
-					Select.clostestOrInRadius(Select.ourWorkersFreeToBuildOrRepair(), order.getBuildPosition(), 250));
+		if (order.setBuildPosition(AMap.getBuildPositionCloseTo(order.getAUnitType(), AMap.getMainBasePosition()))) {
+			if (order.getBuilder() == null)
+				order.setBuilder(Select.clostestOrInRadius(Select.ourWorkersFreeToBuildOrRepair(),
+						order.getBuildPosition(), 250));
 
-		construct(order);
+			construct(order);
+		}
 
 	}
 
