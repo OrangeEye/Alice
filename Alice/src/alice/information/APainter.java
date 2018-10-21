@@ -128,6 +128,8 @@ public class APainter {
 		for (AUnit unit : Select.getOurUnits().values()) {
 			game.drawTextMap(unit.getPosition().getPosition(),
 					unit.getUnitOrder().toString() + " " + unit.getTarget());
+			game.drawLineMap(unit.getPosition().getPosition(), unit.getOrderTargetPosition().getPosition(), Color.Cyan);
+			
 		}
 	}
 

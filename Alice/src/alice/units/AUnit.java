@@ -167,6 +167,10 @@ public class AUnit implements AUnitOrders {
 	public ArrayList<AUnit> getGatherer() {
 		return gatherer;
 	}
+	
+	public APosition getOrderTargetPosition() {
+		return new APosition(unit.getOrderTargetPosition());
+	}
 
     public boolean isConstructing() {
     	return unit.isConstructing();

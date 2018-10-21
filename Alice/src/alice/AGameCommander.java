@@ -14,7 +14,7 @@ public class AGameCommander {
 		
 		CodeProfiler.startMeasuring(CodeProfiler.ASPECT_Global);
 		
-		//führt den Code von jedem Commander aus
+		//fÃ¼hrt den Code von jedem Commander aus
 		CodeProfiler.startMeasuring(CodeProfiler.ASPECT_PAINTING);
 	//	if(AGame.getFrameCount() % 2 ==0)
 		APainter.paint();
@@ -42,5 +42,7 @@ public class AGameCommander {
 		Error lastError = AGame.getLastError();
 		if(lastError != null && !lastError.equals(Error.None)) System.out.println(lastError);
 	}
+	
+	
 
 }

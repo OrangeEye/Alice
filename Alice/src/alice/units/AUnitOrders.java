@@ -40,7 +40,8 @@ public interface AUnitOrders {
 				order.setStatus(AOrder.STAUS_IN_ORDER);
 		} else if (this.u().move(position.getPosition())) {
 			this.unit().setUnitOrder(AUnitOrder._MOVE_TO_BUILD);
-			order.setStatus(AOrder.STATUS_IN_PROCESS);
+			if (order.getBuilder().isConstructing())
+				order.setStatus(AOrder.STATUS_IN_PROCESS);
 		}
 	}
 
